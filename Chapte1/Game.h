@@ -1,8 +1,5 @@
 #pragma once
-
-#include "Vector2.h"
-
-#include "SDL.h"
+#include "PCH.h"
 
 class Game
 {
@@ -33,16 +30,20 @@ private:
 	//SDL이 생성한 렌더러
 	SDL_Renderer* Renderer;
 
-	//패들 위치
-	Vector2 PaddlePos;
-	//공 위치
-	Vector2 BallPos;
-	//공 속도
-	Vector2 BallVel;
+	//왼쪽 패들 위치
+	Vector2 LeftPaddlePos;
+	//오른쪽 패들 위치
+	Vector2 RightPaddlePos;
+
+	//공 배열
+	std::vector<Ball> Balls;
 	
 	Uint32 TicksCount;
 
-	int PaddleDir = 0;
+	//왼쪽 패들 방향
+	int LeftPaddleDir = 0;
+	//오른쪽 패들 방향
+	int RightPaddleDir = 0;
 
 	//게임이 계속 실행되어야 하는지 판단
 	bool bIsRunning;
