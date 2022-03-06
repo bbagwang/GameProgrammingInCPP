@@ -8,6 +8,7 @@
 class Actor;
 class SpriteComponent;
 class Ship;
+class Character;
 
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
@@ -62,7 +63,7 @@ private:
 	std::vector<Actor*> PendingActors;
 
 	//플레이어
-	Ship* Player;
+	Character* Player;
 
 	//게임이 계속 실행되어야 하는지 판단
 	bool bIsRunning;

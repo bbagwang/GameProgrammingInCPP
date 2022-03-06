@@ -5,7 +5,9 @@
 #include "Actor.h"
 #include "ActorState.h"
 #include "BGSpriteComponent.h"
+#include "TileMapComponent.h"
 #include "Ship.h"
+#include "Character.h"
 
 Game::Game()
 	: Window(nullptr)
@@ -253,33 +255,18 @@ void Game::GenerateOutput()
 void Game::LoadData()
 {
 	//플레이어 Ship 액터 생성
-	Player = new Ship(this);
-	Player->SetPosition(Vector2(100.0f, 384.0f));
-	Player->SetScale(1.5f);
+	Player = new Character(this);
+	Player->SetPosition(Vector2(100.0f, SCREEN_HEIGHT-50.f));
+	Player->SetScale(1.0f);
 
-	//배경화면용 액터 생성
-	Actor* BGActor = new Actor(this);
-	BGActor->SetPosition(Vector2(512.0f, 384.0f));
-	
-	//원경 배경 컴포넌트 생성
-	BGSpriteComponent* FarBG = new BGSpriteComponent(BGActor);
-	FarBG->SetScreenSize(Vector2(1024.0f, 768.0f));
-	std::vector<SDL_Texture*> FarBGTextures = {
-		GetTexture("Assets/Farback01.png"),
-		GetTexture("Assets/Farback02.png")
-	};
-	FarBG->SetBGTextures(FarBGTextures);
-	FarBG->SetScrollSpeed(-100.0f);
+	//타일맵 액터 생성
+	Actor* TileActor = new Actor(this);
+	TileActor->SetPosition(Vector2(0.f,0.f));
 
-	//근경 배경 컴포넌트 생성
-	BGSpriteComponent* NearBGSC = new BGSpriteComponent(BGActor, 50);
-	NearBGSC->SetScreenSize(Vector2(1024.0f, 768.0f));
-	std::vector<SDL_Texture*> NearBGTextures = {
-		GetTexture("Assets/Stars.png"),
-		GetTexture("Assets/Stars.png")
-	};
-	NearBGSC->SetBGTextures(NearBGTextures);
-	NearBGSC->SetScrollSpeed(-200.0f);
+	TileMapComponent* TMC = new TileMapComponent(TileActor);
+	TMC->SetScreenSize(Vector2(SCREEN_WIDTH, SCREEN_HEIGHT));
+	TMC->SetTexture(GetTexture("Assets/Tiles.png"));
+	TMC->LoadTileMap("Assets/MapLayer2.csv");
 }
 
 void Game::UnloadData()

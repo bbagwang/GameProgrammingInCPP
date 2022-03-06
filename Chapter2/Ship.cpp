@@ -7,7 +7,7 @@ Ship::Ship(Game* InGame)
 	, RightSpeed(0.f)
 	, DownSpeed(0.f)
 {
-	AnimSpriteComponent* ASC = new AnimSpriteComponent(this, 999);
+	AnimSpriteComponent* ASC = new AnimSpriteComponent(this, 1004);
 	std::vector<SDL_Texture*> Anims = {
 		game->GetTexture("Assets/Ship01.png"),
 		game->GetTexture("Assets/Ship02.png"),

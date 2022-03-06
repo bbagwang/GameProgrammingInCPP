@@ -5,7 +5,7 @@
 SpriteComponent::SpriteComponent(Actor* InOwner, int InDrawOrder)
 	: ActorComponent(InOwner)
 	, Texture(nullptr)
-	, DrawOrder(DrawOrder)
+	, DrawOrder(InDrawOrder)
 	, Width(0)
 	, Height(0)
 {
