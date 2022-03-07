@@ -19,20 +19,17 @@ void TileMapComponent::Draw(SDL_Renderer* Renderer)
 		return;
 
 	static const int RECT_SIZE = 32;
-	static const int WIDTH_LENGTH = 32;
-	static const int HEIGHT_LENGTH = 24;
 	static const int TILE_WIDTH_LENGTH = 8;
-	static const int TILE_HEIGHT_LENGTH = 24;
 
 	int OffsetX = 0;
 	int OffsetY = 0;
 
 	//각각의 배경 텍스쳐를 그린다.
-	for (int Y = 0; Y < HEIGHT_LENGTH; Y++)
+	for (int Y = 0; Y < TileMapHeight; Y++)
 	{
-		for (int X = 0; X < WIDTH_LENGTH; X++)
+		for (int X = 0; X < TileMapWidth; X++)
 		{
-			int TileIndex = TileMap[Y + X];
+			int TileIndex = TileMap[Y * TileMapWidth + X];
 
 			if (TileIndex == -1)
 			{
@@ -82,41 +79,29 @@ void TileMapComponent::SetTexture(SDL_Texture* InTexture)
 		return;
 
 	TileTexture = InTexture;
-
-	//int Width, Height;
-	//SDL_QueryTexture(InTexture, nullptr, nullptr, &Width, &Height);
-
-	//static const int TileSize = 32;
-
-	//int WidthLength = Width / 32;
-	//int HeightLength = Height / 32;
-	//
-	//for (int HeightCount = 0; HeightCount < HeightLength; HeightCount++)
-	//{
-	//	for (int WidthCount = 0; WidthCount < WidthLength; WidthCount++)
-	//	{
-	//		
-	//	}
-	//}
 }
 
 void TileMapComponent::LoadTileMap(const std::string CSVFileString)
 {
 	//32 X 24
-
 	std::fstream FileStream;
 	std::string Buffer;
 	FileStream.open(CSVFileString, std::ios::in);
 
-	while (!FileStream.eof())
+	while (std::getline(FileStream, Buffer))
 	{
-		std::getline(FileStream, Buffer, ',');
 		std::stringstream Converter(Buffer);
+		TileMapWidth = 0;
 
-		int temp = 0;
-		Converter >> temp;
+		while (std::getline(Converter, Buffer, ','))
+		{
+			int temp = 0;
+			Converter >> temp;
+			TileMap.push_back(temp);
+			TileMapWidth++;
+		}
 
-		TileMap.push_back(temp);
+		TileMapHeight++;
 	}
 
 	FileStream.close();

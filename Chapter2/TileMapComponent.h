@@ -20,7 +20,8 @@ public:
 private:
 	SDL_Texture* TileTexture;
 	Vector2 ScreenSize;
-
+	int TileMapWidth;
+	int TileMapHeight;
 	std::vector<int> TileMap;
 };
 

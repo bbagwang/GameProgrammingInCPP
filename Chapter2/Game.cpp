@@ -263,10 +263,18 @@ void Game::LoadData()
 	Actor* TileActor = new Actor(this);
 	TileActor->SetPosition(Vector2(0.f,0.f));
 
-	TileMapComponent* TMC = new TileMapComponent(TileActor);
-	TMC->SetScreenSize(Vector2(SCREEN_WIDTH, SCREEN_HEIGHT));
-	TMC->SetTexture(GetTexture("Assets/Tiles.png"));
-	TMC->LoadTileMap("Assets/MapLayer2.csv");
+	TileMapComponent* TMCLayer1 = new TileMapComponent(TileActor,3);
+	TMCLayer1->SetScreenSize(Vector2(SCREEN_WIDTH, SCREEN_HEIGHT));
+	TMCLayer1->SetTexture(GetTexture("Assets/Tiles.png"));
+	TMCLayer1->LoadTileMap("Assets/MapLayer1.csv");
+	TileMapComponent* TMCLayer2 = new TileMapComponent(TileActor,2);
+	TMCLayer2->SetScreenSize(Vector2(SCREEN_WIDTH, SCREEN_HEIGHT));
+	TMCLayer2->SetTexture(GetTexture("Assets/Tiles.png"));
+	TMCLayer2->LoadTileMap("Assets/MapLayer2.csv");
+	TileMapComponent* TMCLayer3 = new TileMapComponent(TileActor,1);
+	TMCLayer3->SetScreenSize(Vector2(SCREEN_WIDTH, SCREEN_HEIGHT));
+	TMCLayer3->SetTexture(GetTexture("Assets/Tiles.png"));
+	TMCLayer3->LoadTileMap("Assets/MapLayer3.csv");
 }
 
 void Game::UnloadData()
