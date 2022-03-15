@@ -239,7 +239,7 @@ void Game::UpdateGame()
 
 void Game::GenerateOutput()
 {
-	SDL_SetRenderDrawColor(Renderer, 220, 220, 220, 255);
+	SDL_SetRenderDrawColor(Renderer, 255, 255, 255, 255);
 
 	//Back Buffer 초기화
 	SDL_RenderClear(Renderer);
@@ -261,7 +261,7 @@ void Game::LoadData()
 	Player->SetRotation(Math::PiOver2);
 
 	//운석 생성
-	const int numAsteroids = 20;
+	const int numAsteroids = 10;
 	for (int i = 0; i < numAsteroids; i++)
 	{
 		new Asteroid(this);

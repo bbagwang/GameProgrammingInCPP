@@ -13,16 +13,22 @@ InputComponent::InputComponent(Actor* InOwner)
 
 void InputComponent::ProcessInput(const uint8_t* KeyState)
 {
+	if (!Owner)
+		return;
+
 	//MoveComponent 를 위한 전방 속도 계산
 	float ForwardSpeed = 0.f;
+	Vector2 NewForce;
 	if (KeyState[ForwardKey])
 	{
-		ForwardSpeed += MaxForwardSpeed;
+		ForwardSpeed += MaxForwardSpeed * 10.f;
 	}
 	if (KeyState[BackwardKey])
 	{
-		ForwardSpeed -= MaxForwardSpeed;
+		ForwardSpeed -= MaxForwardSpeed * 10.f;
 	}
+
+	AddForce(Owner->GetForward() * ForwardSpeed);
 
 	SetForwardSpeed(ForwardSpeed);
 

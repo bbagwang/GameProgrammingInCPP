@@ -19,7 +19,8 @@ const Vector2& CircleComponent::GetCenter() const
 bool Intersect(const CircleComponent& A, const CircleComponent& B)
 {
 	//거리 제곱값을 계산
-	Vector2 DiffVector = A.GetCenter() - A.GetCenter();
+	
+	Vector2 DiffVector = A.GetCenter() - B.GetCenter();
 	float DistanceSquared = DiffVector.LengthSq();
 
 	//반지름 합의 제곱값을 계산

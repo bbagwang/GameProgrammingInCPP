@@ -4,6 +4,7 @@
 
 SpriteComponent::SpriteComponent(Actor* InOwner, int InDrawOrder)
 	: ActorComponent(InOwner)
+	, bDrawing(true)
 	, Texture(nullptr)
 	, DrawOrder(InDrawOrder)
 	, Width(0)
@@ -25,6 +26,9 @@ SpriteComponent::~SpriteComponent()
 
 void SpriteComponent::Draw(SDL_Renderer* Renderer)
 {
+	if (!bDrawing)
+		return;
+
 	if (!Renderer)
 		return;
 

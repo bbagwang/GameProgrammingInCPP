@@ -13,12 +13,17 @@ public:
 
 	virtual void Draw(SDL_Renderer* Renderer);
 	virtual void SetTexture(SDL_Texture* InTexture);
+	
+	inline void SetDrawingState(bool bNewState) { bDrawing = bNewState; }
+	inline bool GetDrawingState() const { return bDrawing; }
 
 	inline int GetDrawOrder() const { return DrawOrder; }
 	inline int GetWidth() const { return Width; }
 	inline int GetHeight() const { return Height; }
 
 protected:
+	bool bDrawing;
+
 	//그릴 텍스처
 	SDL_Texture* Texture;
 

@@ -10,7 +10,9 @@ public:
 	Asteroid(Game* InGame);
 	virtual ~Asteroid() override;
 
-	inline CircleComponent* GetCircle() { return CircleComp; }
+	virtual void UpdateActor(float DeltaTime) override;
+	
+	inline CircleComponent* GetCircle() const { return CircleComp; }
 
 private:
 	CircleComponent* CircleComp;

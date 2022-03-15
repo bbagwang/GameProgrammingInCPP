@@ -21,7 +21,8 @@ Asteroid::Asteroid(Game* InGame)
 	//이동 컴포넌트를 생성하고 전방 속도를 설정한다.
 	MoveComponent* MoveComp = new MoveComponent(this);
 	MoveComp->SetForwardSpeed(150.f);
-
+	MoveComp->AddForce(GetForward() * Random::GetFloatRange(10000.f, 100000.f));
+	
 	//원 컴포넌트를 생성하고 충돌 체크를 위해 반지름을 설정한다.
 	CircleComp = new CircleComponent(this);
 	CircleComp->SetRadius(40.f);
@@ -33,4 +34,27 @@ Asteroid::~Asteroid()
 {
 	GetGame()->RemoveAsteroid(this);
 	Actor::~Actor();
+}
+
+void Asteroid::UpdateActor(float DeltaTime)
+{
+	Vector2 CurrentPosition = GetPosition();
+
+	if (CurrentPosition.x > 1024.f)
+	{
+		SetPosition(Vector2(0.f, CurrentPosition.y));
+	}
+	else if (CurrentPosition.x < 0.f)
+	{
+		SetPosition(Vector2(1024.f, CurrentPosition.y));
+	}
+
+	if (CurrentPosition.y > 768.f)
+	{
+		SetPosition(Vector2(CurrentPosition.x, 0.f));
+	}
+	else if (CurrentPosition.y < 0.f)
+	{
+		SetPosition(Vector2(CurrentPosition.x, 768.f));
+	}
 }
