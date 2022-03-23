@@ -180,100 +180,7 @@ int BoardState::GetFourInARow() const
 
 float BoardState::CalculateHeuristic() const
 {
-	float BestScore = 0.f;
-	//// Check if there's a row with four in a row
-	//for (int row = 0; row < 6; row++)
-	//{
-	//	for (int col = 0; col < 4; col++)
-	//	{
-	//		if (mBoard[row][col] == mBoard[row][col + 1] &&
-	//			mBoard[row][col] == mBoard[row][col + 2] &&
-	//			mBoard[row][col] == mBoard[row][col + 3])
-	//		{
-	//			BestScore = 100;
-	//		}
-	//		else if (mBoard[row][col] == mBoard[row][col + 1] &&
-	//				mBoard[row][col] == mBoard[row][col + 2])
-	//		{
-	//			BestScore = 75;
-	//		}
-	//		else if (mBoard[row][col] == mBoard[row][col + 1])
-	//		{
-	//			BestScore = 50;
-	//		}
-	//	}
-	//}
-
-	//// Check if there's a column with four in a row
-	//for (int col = 0; col < 7; col++)
-	//{
-	//	for (int row = 0; row < 3; row++)
-	//	{
-	//		if (mBoard[row][col] == mBoard[row + 1][col] &&
-	//			mBoard[row][col] == mBoard[row + 2][col] &&
-	//			mBoard[row][col] == mBoard[row + 3][col])
-	//		{
-	//			BestScore = 100;
-	//		}
-	//		else if (mBoard[row][col] == mBoard[row + 1][col] &&
-	//			mBoard[row][col] == mBoard[row + 2][col])
-	//		{
-	//			BestScore = 75;
-	//		}
-	//		else if (mBoard[row][col] == mBoard[row + 1][col])
-	//		{
-	//			BestScore = 50;
-	//		}
-	//	}
-	//}
-
-	//// Check if there's a right diagonal four in a row
-	//for (int col = 0; col < 4; col++)
-	//{
-	//	for (int row = 0; row < 3; row++)
-	//	{
-	//		if (mBoard[row][col] == mBoard[row + 1][col + 1] &&
-	//			mBoard[row][col] == mBoard[row + 2][col + 2] &&
-	//			mBoard[row][col] == mBoard[row + 3][col + 3])
-	//		{
-	//			BestScore = 100;
-	//		}
-	//		else if (mBoard[row][col] == mBoard[row + 1][col + 1] &&
-	//			mBoard[row][col] == mBoard[row + 2][col + 2])
-	//		{
-	//			BestScore = 75;
-	//		}
-	//		else if (mBoard[row][col] == mBoard[row + 1][col + 1])
-	//		{
-	//			BestScore = 50;
-	//		}
-	//	}
-	//}
-
-	//// Check if there's a left diagonal for in a row
-	//for (int col = 0; col < 4; col++)
-	//{
-	//	for (int row = 3; row < 6; row++)
-	//	{
-	//		if (mBoard[row][col] == mBoard[row - 1][col + 1] &&
-	//			mBoard[row][col] == mBoard[row - 2][col + 2] &&
-	//			mBoard[row][col] == mBoard[row - 3][col + 3])
-	//		{
-	//			BestScore = 100;
-	//		}
-	//		else if (mBoard[row][col] == mBoard[row - 1][col + 1] &&
-	//			mBoard[row][col] == mBoard[row - 2][col + 2])
-	//		{
-	//			BestScore = 75;
-	//		}
-	//		else if (mBoard[row][col] == mBoard[row - 1][col + 1])
-	//		{
-	//				BestScore = 50;
-	//		}
-	//	}
-	//}
-
-	return BestScore;
+	return 0;
 }
 
 float AlphaBetaMin(const BoardState* node, int Depth, float alpha, float beta)
@@ -286,7 +193,7 @@ float AlphaBetaMin(const BoardState* node, int Depth, float alpha, float beta)
 
 	float minValue = std::numeric_limits<float>::infinity();
 	// Find the subtree with the minimum value
-	for (const BoardState* child : node->GetPossibleMoves(BoardState::Red))
+	for (const BoardState* child : node->GetPossibleMoves(BoardState::Yellow))
 	{
 		minValue = std::min(minValue, AlphaBetaMax(child, Depth - 1, alpha, beta));
 		if (minValue <= alpha)
