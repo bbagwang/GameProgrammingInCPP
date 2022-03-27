@@ -1,11 +1,3 @@
-
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudio,c++
-# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio,c++
-
-### C++ ###
-# Prerequisites
-*.d
-
 # Compiled Object files
 *.slo
 *.lo
@@ -15,21 +7,6 @@
 # Precompiled Headers
 *.gch
 *.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
 
 # Executables
 *.exe
@@ -49,12 +26,6 @@
 *.userosscache
 *.sln.docstates
 
-# User-specific files (MonoDevelop/Xamarin Studio)
-*.userprefs
-
-# Mono auto generated files
-mono_crash.*
-
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -73,8 +44,6 @@ bld/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
-# Uncomment if you have tasks that create the project's static files in wwwroot
-#wwwroot/
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/
