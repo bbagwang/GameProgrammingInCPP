@@ -1,7 +1,5 @@
 #include "Game.h"
 
-//#include "Search.h"
-
 int main(int argc, char** argv)
 {
 	Game game;
@@ -12,8 +10,6 @@ int main(int argc, char** argv)
 	}
 
 	game.Shutdown();
-	
-	//testTicTac();
 
 	return 0;
 }
