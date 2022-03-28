@@ -1,6 +1,6 @@
 #include "Game.h"
 
-#include "SDL_image.h"
+#include "SDL/SDL_image.h"
 
 #include "Actor.h"
 #include "ActorState.h"
