@@ -183,10 +183,14 @@ void Game::GenerateOutput()
 	//색상 버퍼 초기화
 	glClear(GL_COLOR_BUFFER_BIT);
 	
-	// Draw all sprite components
-	// Enable alpha blending on the color buffer
+	//모든 스프라이트를 그림
+	// 
+	//알파 블렌딩을 활성화함 (기본 비활성)
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//블랜딩 함수 결정
+	glBlendFunc(
+		GL_SRC_ALPHA,			//SrcFactor = srcAlpha
+		GL_ONE_MINUS_SRC_ALPHA);//dstFactor = 1 - srcAlpha
 	
 	//스프라이트 쉐이더와 버텍스 배열 개체를 활성화
 	mSpriteShader->SetActive();
@@ -219,11 +223,14 @@ bool Game::LoadShaders()
 
 void Game::CreateSpriteVerts()
 {
+	//각 버텍스에서 처음 3개의 부동 소수점은 위치
+	//그 다음의 2개의 부동 소수점은 텍스처의 좌표
+	//UV 텍스처 좌표에서 V는 OpenGL 의 이미지 처리 방법때문에 Flip 됨.
 	float vertices[] = {
-		-0.5f,  0.5f, 0.f, 0.f, 0.f, // top left
-		 0.5f,  0.5f, 0.f, 1.f, 0.f, // top right
-		 0.5f, -0.5f, 0.f, 1.f, 1.f, // bottom right
-		-0.5f, -0.5f, 0.f, 0.f, 1.f  // bottom left
+		-0.5f,  0.5f, 0.f, 0.f, 0.f, // 왼쪽 상단
+		 0.5f,  0.5f, 0.f, 1.f, 0.f, // 오른쪽 상단
+		 0.5f, -0.5f, 0.f, 1.f, 1.f, // 오른쪽 하단
+		-0.5f, -0.5f, 0.f, 0.f, 1.f  // 왼쪽 하단
 	};
 
 	unsigned int indices[] = {

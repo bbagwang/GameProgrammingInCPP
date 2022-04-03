@@ -42,11 +42,12 @@ void SpriteComponent::Draw(Shader* shader)
 		// Since all sprites use the same shader/vertices,
 		// the game first sets them active before any sprite draws
 		
-		// Set world transform
+		//World Transform 설정
 		shader->SetMatrixUniform("uWorldTransform", world);
-		// Set current texture
+		//현재 텍스처를 설정
 		mTexture->SetActive();
-		// Draw quad
+
+		//사각형을 그린다
 		glDrawElements(
 			GL_TRIANGLES,		//그려야 할 폴리곤 / 프리미티브 타입
 			6,					//인덱스 버퍼에 있는 인덱스의 수

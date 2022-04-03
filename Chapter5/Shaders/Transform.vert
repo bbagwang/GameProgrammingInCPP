@@ -13,7 +13,7 @@
 uniform mat4 uWorldTransform;
 uniform mat4 uViewProj;
 
-// Vertex attributes
+//버텍스 위치 정보
 in vec3 inPosition;
 
 void main()

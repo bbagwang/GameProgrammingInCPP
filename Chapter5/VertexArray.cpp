@@ -58,8 +58,13 @@ VertexArray::VertexArray(const float* verts, unsigned int numVerts,
 	//추가 속성에 대해서는 오프셋에 0이 아닌 값을 전달해야함.
 
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5,
-		reinterpret_cast<void*>(sizeof(float) * 3));
+	glVertexAttribPointer(
+		1,											//버텍스 속성 인덱스
+		2,											//컴포넌트의 수 (UV, 2)
+		GL_FLOAT,									//각 컴포넌트의 타입
+		GL_FALSE,									//GL_FLOAT 에서는 사용 하지 않음
+		sizeof(float) * 5,							//간격 (간격은 항상 버텍스의 크기)
+		reinterpret_cast<void*>(sizeof(float) * 3));//오프셋 포인터
 }
 
 VertexArray::~VertexArray()
