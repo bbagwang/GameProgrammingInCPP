@@ -174,12 +174,12 @@ void Game::UpdateGame()
 	{
 		delete actor;
 	}
+
+	UpdateBackgroundColor(deltaTime);
 }
 
 void Game::GenerateOutput()
 {
-	//색상 버퍼 초기화 컬러를 회색으로 설정
-	glClearColor(0.86f, 0.86f, 0.86f, 1.0f);
 	//색상 버퍼 초기화
 	glClear(GL_COLOR_BUFFER_BIT);
 	
@@ -272,6 +272,41 @@ void Game::UnloadData()
 		delete i.second;
 	}
 	mTextures.clear();
+}
+
+
+void Game::UpdateBackgroundColor(float DeltaTime)
+{
+	CurrentBackgroundBlendTime += DeltaTime;
+	float BackgroundColorAlpha = CurrentBackgroundBlendTime / MaxBackgroundBlendTime;
+	BackgroundColorAlpha = Math::Clamp<float>(BackgroundColorAlpha, 0.f, 1.f);
+	
+	if (BackgroundColorAlpha >= 1.f)
+	{
+		OriginalBackgroundColor = CurrentBackgroundColor;
+		CurrentBackgroundBlendTime = 0.f;
+		NextBackgroundColor = Vector3(Random::GetFloatRange(0.f, 255.f), Random::GetFloatRange(0.f, 255.f), Random::GetFloatRange(0.f, 255.f));
+	}
+	else
+	{
+		CurrentBackgroundColor.x = Math::Lerp(OriginalBackgroundColor.x, NextBackgroundColor.x, BackgroundColorAlpha);
+		CurrentBackgroundColor.y = Math::Lerp(OriginalBackgroundColor.y, NextBackgroundColor.y, BackgroundColorAlpha);
+		CurrentBackgroundColor.z = Math::Lerp(OriginalBackgroundColor.z, NextBackgroundColor.z, BackgroundColorAlpha);
+	}
+	
+	Vector3 ResultColorRatio
+	{
+		CurrentBackgroundColor.x / 255.f,
+		CurrentBackgroundColor.y / 255.f,
+		CurrentBackgroundColor.z / 255.f
+	};
+	
+	//색상 버퍼 초기화 컬러 업데이트
+	glClearColor(
+		ResultColorRatio.x,
+		ResultColorRatio.y,
+		ResultColorRatio.z,
+		1.0f);
 }
 
 Texture* Game::GetTexture(const std::string& fileName)

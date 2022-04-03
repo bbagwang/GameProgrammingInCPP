@@ -97,7 +97,7 @@ namespace Math
 
 	inline float Lerp(float a, float b, float f)
 	{
-		return a + f * (b - a);
+		return (a *(1-f)) + (b * f);
 	}
 
 	inline float Sqrt(float value)

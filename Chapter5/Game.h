@@ -13,6 +13,7 @@
 #include <vector>
 #include "Math.h"
 
+
 class Game
 {
 public:
@@ -43,7 +44,10 @@ private:
 	void CreateSpriteVerts();
 	void LoadData();
 	void UnloadData();
+
+	void UpdateBackgroundColor(float DeltaTime);
 	
+private:
 	// Map of textures loaded
 	std::unordered_map<std::string, class Texture*> mTextures;
 
@@ -70,4 +74,10 @@ private:
 	// Game-specific
 	class Ship* mShip;
 	std::vector<class Asteroid*> mAsteroids;
+
+	Vector3 OriginalBackgroundColor = Color::White;
+	Vector3 CurrentBackgroundColor = Color::White;
+	Vector3 NextBackgroundColor = Color::LightBlue;
+	float CurrentBackgroundBlendTime = 0.0f;
+	float MaxBackgroundBlendTime = 1.f;
 };
