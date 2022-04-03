@@ -12,6 +12,9 @@
 //버텍스 쉐이더에서 넘어온 텍스처 위치
 in vec2 fragTexCoord;
 
+//버텍스 쉐이더에서 출력되어 넘어온 버텍스 컬러
+in vec4 vertColor;
+
 //최종 픽셀 컬러
 out vec4 outColor;
 
@@ -20,6 +23,6 @@ uniform sampler2D uTexture;
 
 void main()
 {
-	//텍스처로부터 색상을 샘플링
-	outColor = texture(uTexture, fragTexCoord);
+	//텍스처로부터 색상을 샘플링 + 버텍스 컬러 배합
+	outColor = texture(uTexture, fragTexCoord) * vertColor;
 }

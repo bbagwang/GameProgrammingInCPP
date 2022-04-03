@@ -26,7 +26,7 @@ VertexArray::VertexArray(const float* verts, unsigned int numVerts,
 	//GL_ARRAY_BUFFER 는 지금 막 생성한 버텍스 버퍼를 사용하겠다는 것을 뜻함.
 	glBufferData(
 		GL_ARRAY_BUFFER,				//데이터를 쓸 버퍼의 버퍼 타입
-		numVerts * 5 * sizeof(float),	//복사할 바이트 크기 (각 버텍스의 데이터 크기에 버텍스 개수를 곱한 값)
+		numVerts * 9 * sizeof(float),	//복사할 바이트 크기 (각 버텍스의 데이터 크기에 버텍스 개수를 곱한 값)
 		verts,							//복사할 소스(포인터)
 		GL_STATIC_DRAW);				//이 데이터를 어떻게 사용할 것인가?
 
@@ -53,7 +53,7 @@ VertexArray::VertexArray(const float* verts, unsigned int numVerts,
 		3,					//요소의 수 (이번 예에서는 3)
 		GL_FLOAT,			//요소의 타입
 		GL_FALSE,			//(정수형 타입에서만 사용된다.)
-		sizeof(float) * 5,	//간격 (일반적으로 각 버텍스의 크기) [버텍스 버퍼에서 패딩이 없다면 간격은 버텍스의 크기가 됨]
+		sizeof(float) * 9,	//간격 (일반적으로 각 버텍스의 크기) [버텍스 버퍼에서 패딩이 없다면 간격은 버텍스의 크기가 됨]
 		0);					//버텍스의 시작에서 이 속성까지의 오프셋 (0은 위치 속성은 버텍스의 시작 위치와 동일하기 때문)
 	//추가 속성에 대해서는 오프셋에 0이 아닌 값을 전달해야함.
 
@@ -63,8 +63,17 @@ VertexArray::VertexArray(const float* verts, unsigned int numVerts,
 		2,											//컴포넌트의 수 (UV, 2)
 		GL_FLOAT,									//각 컴포넌트의 타입
 		GL_FALSE,									//GL_FLOAT 에서는 사용 하지 않음
-		sizeof(float) * 5,							//간격 (간격은 항상 버텍스의 크기)
+		sizeof(float) * 9,							//간격 (간격은 항상 버텍스의 크기)
 		reinterpret_cast<void*>(sizeof(float) * 3));//오프셋 포인터
+
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(
+		2,											//버텍스 속성 인덱스
+		4,											//컴포넌트의 수 (RGBA, 4)
+		GL_FLOAT,									//각 컴포넌트의 타입
+		GL_FALSE,									//GL_FLOAT 에서는 사용 하지 않음
+		sizeof(float) * 9,							//간격 (간격은 항상 버텍스의 크기)
+		reinterpret_cast<void*>(sizeof(float) * 5));//오프셋 포인터
 }
 
 VertexArray::~VertexArray()
