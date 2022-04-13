@@ -32,9 +32,8 @@ struct PointLight
 	// Specular color
 	Vector3 mSpecColor;
 
-	float mConstant;
-	float mLinear;
-	float mQuadratic;
+	float SourceRadius;
+	float AttenuationRadius;
 };
 
 class Renderer

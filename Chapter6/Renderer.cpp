@@ -274,6 +274,16 @@ bool Renderer::LoadShaders()
 	mProjection = Matrix4::CreatePerspectiveFOV(Math::ToRadians(70.0f),
 		mScreenWidth, mScreenHeight, 25.0f, 10000.0f);
 	mMeshShader->SetMatrixUniform("uViewProj", mView * mProjection);
+
+	// Create basic mesh shader
+	mBasicShader = new Shader();
+	if (!mBasicShader->Load("Shaders/BasicMesh.vert", "Shaders/BasicMesh.frag"))
+	{
+		return false;
+	}
+
+	//mBasicShader->SetActive();
+	mBasicShader->SetMatrixUniform("uViewProj", mView * mProjection);
 	return true;
 }
 
@@ -313,29 +323,25 @@ void Renderer::SetLightUniforms(Shader* shader)
 	shader->SetVectorUniform("uPointLights[0].mPosition", mPointLights[0].mPosition);
 	shader->SetVectorUniform("uPointLights[0].mDiffuseColor", mPointLights[0].mDiffuseColor);
 	shader->SetVectorUniform("uPointLights[0].mSpecColor", mPointLights[0].mSpecColor);
-	shader->SetFloatUniform("uPointLights[0].mConstant", mPointLights[0].mConstant);
-	shader->SetFloatUniform("uPointLights[0].mLinear", mPointLights[0].mLinear);
-	shader->SetFloatUniform("uPointLights[0].mQuadratic", mPointLights[0].mQuadratic);
+	shader->SetFloatUniform("uPointLights[0].SourceRadius", mPointLights[0].SourceRadius);
+	shader->SetFloatUniform("uPointLights[0].AttenuationRadius", mPointLights[0].AttenuationRadius);
 
 	shader->SetVectorUniform("uPointLights[1].mPosition", mPointLights[1].mPosition);
 	shader->SetVectorUniform("uPointLights[1].mDiffuseColor", mPointLights[1].mDiffuseColor);
 	shader->SetVectorUniform("uPointLights[1].mSpecColor", mPointLights[1].mSpecColor);
-	shader->SetFloatUniform("uPointLights[1].mConstant", mPointLights[1].mConstant);
-	shader->SetFloatUniform("uPointLights[1].mLinear", mPointLights[1].mLinear);
-	shader->SetFloatUniform("uPointLights[1].mQuadratic", mPointLights[1].mQuadratic);
+	shader->SetFloatUniform("uPointLights[1].SourceRadius", mPointLights[1].SourceRadius);
+	shader->SetFloatUniform("uPointLights[1].AttenuationRadius", mPointLights[1].AttenuationRadius);
 
 	shader->SetVectorUniform("uPointLights[2].mPosition", mPointLights[2].mPosition);
 	shader->SetVectorUniform("uPointLights[2].mDiffuseColor", mPointLights[2].mDiffuseColor);
 	shader->SetVectorUniform("uPointLights[2].mSpecColor", mPointLights[2].mSpecColor);
-	shader->SetFloatUniform("uPointLights[2].mConstant", mPointLights[2].mConstant);
-	shader->SetFloatUniform("uPointLights[2].mLinear", mPointLights[2].mLinear);
-	shader->SetFloatUniform("uPointLights[2].mQuadratic", mPointLights[2].mQuadratic);
+	shader->SetFloatUniform("uPointLights[2].SourceRadius", mPointLights[2].SourceRadius);
+	shader->SetFloatUniform("uPointLights[2].AttenuationRadius", mPointLights[2].AttenuationRadius);
 
 	shader->SetVectorUniform("uPointLights[3].mPosition", mPointLights[3].mPosition);
 	shader->SetVectorUniform("uPointLights[3].mDiffuseColor", mPointLights[3].mDiffuseColor);
 	shader->SetVectorUniform("uPointLights[3].mSpecColor", mPointLights[3].mSpecColor);
-	shader->SetFloatUniform("uPointLights[3].mConstant", mPointLights[3].mConstant);
-	shader->SetFloatUniform("uPointLights[3].mLinear", mPointLights[3].mLinear);
-	shader->SetFloatUniform("uPointLights[3].mQuadratic", mPointLights[3].mQuadratic);
+	shader->SetFloatUniform("uPointLights[3].SourceRadius", mPointLights[3].SourceRadius);
+	shader->SetFloatUniform("uPointLights[3].AttenuationRadius", mPointLights[3].AttenuationRadius);
 
 }

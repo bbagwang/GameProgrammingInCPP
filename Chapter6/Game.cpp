@@ -202,41 +202,37 @@ void Game::LoadData()
 	dir.mSpecColor = Vector3(0.8f, 0.8f, 0.8f);
 
 	PointLight point1;
-	point1.mPosition = Vector3(100, 100, 100.f);
+	point1.mPosition = Vector3(350, 175, 0.f);
 	point1.mDiffuseColor = Vector3(1.f,0.f,0.f);
 	point1.mSpecColor = Vector3(1.f, 0.f, 0.f);
-	point1.mConstant = 1.f;
-	point1.mLinear = 0.09f;
-	point1.mQuadratic = 0.0032f;
+	point1.SourceRadius = 100.f;
+	point1.AttenuationRadius = 500.f;
 	mRenderer->SetPointLight(0, point1);
 
 	PointLight point2;
-	point2.mPosition = Vector3(-100, 100, 100.f);
+	point2.mPosition = Vector3(350, -25, 0.f);
 	point2.mDiffuseColor = Vector3(0.f, 1.f, 0.f);
 	point2.mSpecColor = Vector3(0.f, 1.f, 0.f);
-	point2.mConstant = 1.f;
-	point2.mLinear = 0.09f;
-	point2.mQuadratic = 0.0032f;
+	point2.SourceRadius = 100.f;
+	point2.AttenuationRadius = 500.f;
 	mRenderer->SetPointLight(1, point2);
 
 
 	PointLight point3;
-	point3.mPosition = Vector3(100, -100, 100.f);
+	point3.mPosition = Vector3(50, 175, 0.f);
 	point3.mDiffuseColor = Vector3(0.f, 0.f, 1.f);
 	point3.mSpecColor = Vector3(0.f, 0.f, 1.f);
-	point3.mConstant = 1.f;
-	point3.mLinear = 0.09f;
-	point3.mQuadratic = 0.0032f;
+	point3.SourceRadius = 100.f;
+	point3.AttenuationRadius = 500.f;
 	mRenderer->SetPointLight(2, point3);
 
 
 	PointLight point4;
-	point4.mPosition = Vector3(-100, -100, 100.f);
+	point4.mPosition = Vector3(50, -25, 0.f);
 	point4.mDiffuseColor = Vector3(0.5f, 0.5f, 0.f);
 	point4.mSpecColor = Vector3(0.5f, 0.5f, 0.f);
-	point4.mConstant = 1.f;
-	point4.mLinear = 0.09f;
-	point4.mQuadratic = 0.0032f;
+	point4.SourceRadius = 100.f;
+	point4.AttenuationRadius = 500.f;
 	mRenderer->SetPointLight(3, point4);
 
 	// Camera actor
