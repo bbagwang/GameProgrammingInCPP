@@ -14,6 +14,7 @@
 #include "MeshComponent.h"
 #include "CameraActor.h"
 #include "PlaneActor.h"
+#include "Random.h"
 
 Game::Game()
 :mRenderer(nullptr)
@@ -25,6 +26,8 @@ Game::Game()
 
 bool Game::Initialize()
 {
+	Random::Init();
+
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0)
 	{
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -197,6 +200,44 @@ void Game::LoadData()
 	dir.mDirection = Vector3(0.0f, -0.707f, -0.707f);
 	dir.mDiffuseColor = Vector3(0.78f, 0.88f, 1.0f);
 	dir.mSpecColor = Vector3(0.8f, 0.8f, 0.8f);
+
+	PointLight point1;
+	point1.mPosition = Vector3(100, 100, 100.f);
+	point1.mDiffuseColor = Vector3(1.f,0.f,0.f);
+	point1.mSpecColor = Vector3(1.f, 0.f, 0.f);
+	point1.mConstant = 1.f;
+	point1.mLinear = 0.09f;
+	point1.mQuadratic = 0.0032f;
+	mRenderer->SetPointLight(0, point1);
+
+	PointLight point2;
+	point2.mPosition = Vector3(-100, 100, 100.f);
+	point2.mDiffuseColor = Vector3(0.f, 1.f, 0.f);
+	point2.mSpecColor = Vector3(0.f, 1.f, 0.f);
+	point2.mConstant = 1.f;
+	point2.mLinear = 0.09f;
+	point2.mQuadratic = 0.0032f;
+	mRenderer->SetPointLight(1, point2);
+
+
+	PointLight point3;
+	point3.mPosition = Vector3(100, -100, 100.f);
+	point3.mDiffuseColor = Vector3(0.f, 0.f, 1.f);
+	point3.mSpecColor = Vector3(0.f, 0.f, 1.f);
+	point3.mConstant = 1.f;
+	point3.mLinear = 0.09f;
+	point3.mQuadratic = 0.0032f;
+	mRenderer->SetPointLight(2, point3);
+
+
+	PointLight point4;
+	point4.mPosition = Vector3(-100, -100, 100.f);
+	point4.mDiffuseColor = Vector3(0.5f, 0.5f, 0.f);
+	point4.mSpecColor = Vector3(0.5f, 0.5f, 0.f);
+	point4.mConstant = 1.f;
+	point4.mLinear = 0.09f;
+	point4.mQuadratic = 0.0032f;
+	mRenderer->SetPointLight(3, point4);
 
 	// Camera actor
 	mCameraActor = new CameraActor(this);

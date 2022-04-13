@@ -34,6 +34,20 @@ struct DirectionalLight
 	vec3 mSpecColor;
 };
 
+struct PointlLight
+{
+	// ºû À§Ä¡
+	vec3 mPosition;
+	// Diffuse color
+	vec3 mDiffuseColor;
+	// Specular color
+	vec3 mSpecColor;
+
+	float mConstant;
+	float mLinear;
+	float mQuadratic;
+};
+
 // Uniforms for lighting
 // Camera position (in world space)
 uniform vec3 uCameraPos;
@@ -45,14 +59,30 @@ uniform vec3 uAmbientLight;
 // Directional Light
 uniform DirectionalLight uDirLight;
 
+//Point Lights
+#define POINT_LIGHT_COUNT 4
+uniform PointlLight uPointLights[POINT_LIGHT_COUNT];
+
+vec4 CalculateDirectionalLight();
+vec4 CalculatePointLight(int index);
+
 void main()
+{
+    outColor = CalculateDirectionalLight();
+	/*for(int i = 0 ; i < POINT_LIGHT_COUNT ; i++)
+	{
+		outColor += CalculatePointLight(i);
+	}*/
+}
+
+vec4 CalculateDirectionalLight()
 {
 	// Surface normal
 	vec3 N = normalize(fragNormal);
 	// Vector from surface to light
 	vec3 L = normalize(-uDirLight.mDirection);
 	// Vector from surface to camera
-	vec3 V = normalize(uCameraPos - fragWorldPos);
+	vec3 V = normalize(uCameraPos-fragWorldPos);
 	// Reflection of -L about N
 	vec3 R = normalize(reflect(-L, N));
 
@@ -67,5 +97,35 @@ void main()
 	}
 
 	// Final color is texture color times phong light (alpha = 1)
-    outColor = texture(uTexture, fragTexCoord) * vec4(Phong, 1.0f);
+    return texture(uTexture, fragTexCoord) * vec4(Phong, 1.0f);
+}
+
+vec4 CalculatePointLight(int index)
+{
+	// Surface normal
+	vec3 N = normalize(fragNormal);
+	// Vector from surface to light
+	vec3 L = normalize(uPointLights[index].mPosition - fragWorldPos);
+	// Vector from surface to camera
+	vec3 V = normalize(uCameraPos-fragWorldPos);
+	// Reflection of -L about N
+	vec3 R = normalize(reflect(-L, N));
+	
+	// Compute phong reflection
+	vec3 Phong = uAmbientLight;
+	float NdotL = dot(N, L);
+	if (NdotL > 0)
+	{
+
+		//°¨¼â °è»ê
+		float distance    = length(uPointLights[index].mPosition - fragWorldPos);
+		float Attenuation = 1.0 / (uPointLights[index].mConstant + uPointLights[index].mLinear * distance + 
+  		uPointLights[index].mQuadratic * (distance * distance));
+
+		vec3 Diffuse = uDirLight.mDiffuseColor * NdotL;
+		vec3 Specular = uDirLight.mSpecColor * pow(max(0.0, dot(R, V)), uSpecPower);
+		Phong += (Diffuse + Specular) * Attenuation;
+	}
+
+	 return texture(uTexture, fragTexCoord) * vec4(Phong, 1.0f);
 }

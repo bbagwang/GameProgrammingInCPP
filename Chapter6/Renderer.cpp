@@ -242,6 +242,11 @@ Mesh* Renderer::GetMesh(const std::string & fileName)
 	return m;
 }
 
+void Renderer::SetPointLight(int index, PointLight light)
+{
+	mPointLights[index] = light;
+}
+
 bool Renderer::LoadShaders()
 {
 	// Create sprite shader
@@ -304,4 +309,33 @@ void Renderer::SetLightUniforms(Shader* shader)
 		mDirLight.mDiffuseColor);
 	shader->SetVectorUniform("uDirLight.mSpecColor",
 		mDirLight.mSpecColor);
+
+	shader->SetVectorUniform("uPointLights[0].mPosition", mPointLights[0].mPosition);
+	shader->SetVectorUniform("uPointLights[0].mDiffuseColor", mPointLights[0].mDiffuseColor);
+	shader->SetVectorUniform("uPointLights[0].mSpecColor", mPointLights[0].mSpecColor);
+	shader->SetFloatUniform("uPointLights[0].mConstant", mPointLights[0].mConstant);
+	shader->SetFloatUniform("uPointLights[0].mLinear", mPointLights[0].mLinear);
+	shader->SetFloatUniform("uPointLights[0].mQuadratic", mPointLights[0].mQuadratic);
+
+	shader->SetVectorUniform("uPointLights[1].mPosition", mPointLights[1].mPosition);
+	shader->SetVectorUniform("uPointLights[1].mDiffuseColor", mPointLights[1].mDiffuseColor);
+	shader->SetVectorUniform("uPointLights[1].mSpecColor", mPointLights[1].mSpecColor);
+	shader->SetFloatUniform("uPointLights[1].mConstant", mPointLights[1].mConstant);
+	shader->SetFloatUniform("uPointLights[1].mLinear", mPointLights[1].mLinear);
+	shader->SetFloatUniform("uPointLights[1].mQuadratic", mPointLights[1].mQuadratic);
+
+	shader->SetVectorUniform("uPointLights[2].mPosition", mPointLights[2].mPosition);
+	shader->SetVectorUniform("uPointLights[2].mDiffuseColor", mPointLights[2].mDiffuseColor);
+	shader->SetVectorUniform("uPointLights[2].mSpecColor", mPointLights[2].mSpecColor);
+	shader->SetFloatUniform("uPointLights[2].mConstant", mPointLights[2].mConstant);
+	shader->SetFloatUniform("uPointLights[2].mLinear", mPointLights[2].mLinear);
+	shader->SetFloatUniform("uPointLights[2].mQuadratic", mPointLights[2].mQuadratic);
+
+	shader->SetVectorUniform("uPointLights[3].mPosition", mPointLights[3].mPosition);
+	shader->SetVectorUniform("uPointLights[3].mDiffuseColor", mPointLights[3].mDiffuseColor);
+	shader->SetVectorUniform("uPointLights[3].mSpecColor", mPointLights[3].mSpecColor);
+	shader->SetFloatUniform("uPointLights[3].mConstant", mPointLights[3].mConstant);
+	shader->SetFloatUniform("uPointLights[3].mLinear", mPointLights[3].mLinear);
+	shader->SetFloatUniform("uPointLights[3].mQuadratic", mPointLights[3].mQuadratic);
+
 }
