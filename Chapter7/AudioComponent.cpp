@@ -25,6 +25,10 @@ void AudioComponent::Update(float deltaTime)
 {
 	Component::Update(deltaTime);
 
+	//위치,회전,스케일중 뭐든 변해야 3D 사운드 관련 업데이트가 이뤄짐
+	//근데 불소리나는애는 안움직여서 업데이트가 안되는 문제가 있어서 그냥 이렇게 대충 처리함
+	OnUpdateWorldTransform();
+	
 	// Remove invalid 2D events
 	auto iter = mEvents2D.begin();
 	while (iter != mEvents2D.end())

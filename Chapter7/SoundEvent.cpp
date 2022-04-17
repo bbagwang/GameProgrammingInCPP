@@ -9,6 +9,8 @@
 #include "SoundEvent.h"
 #include "AudioSystem.h"
 #include <fmod_studio.hpp>
+#include "CameraActor.h"
+#include "Game.h"
 
 SoundEvent::SoundEvent(class AudioSystem* system, unsigned int id)
 	:mSystem(system)
@@ -164,9 +166,29 @@ void SoundEvent::Set3DAttributes(const Matrix4& worldTrans)
 	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
 	if (event)
 	{
+		//S
+		Vector3 SoundPosition = worldTrans.GetTranslation();
+		CameraActor* CamActor = mSystem->mGame->GetCameraActor();
+		if (CamActor)
+		{
+			//P
+			Vector3 PlayerPosition = CamActor->GetPosition();
+			//C
+			Vector3 CameraPosition = CamActor->GetCameraPosition();
+			
+			//S-P
+			Vector3 PlayerToSound = SoundPosition - PlayerPosition;
+			//S-C
+			Vector3 CameraToSound = SoundPosition - CameraPosition;
+			
+			Vector3 VirtualSoundOffset = Vector3::Normalize(CameraToSound) * PlayerToSound.Length();
+
+			SoundPosition = CameraPosition + VirtualSoundOffset;
+		}
+		
 		FMOD_3D_ATTRIBUTES attr;
 		// Set position, forward, up
-		attr.position = VecToFMOD(worldTrans.GetTranslation());
+		attr.position = VecToFMOD(SoundPosition);
 		// In world transform, first row is forward
 		attr.forward = VecToFMOD(worldTrans.GetXAxis());
 		// Third row is up
