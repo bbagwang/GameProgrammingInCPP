@@ -19,11 +19,18 @@ public:
 	~AudioComponent();
 
 	void Update(float deltaTime) override;
+	//액터가 세계 변환 행렬을 계산할 때마다 호출됨
+	//변경될 때 마다 mEvents3D에 있는 모든 3D 이벤트의 3D 속성을 갱신
 	void OnUpdateWorldTransform() override;
 
 	SoundEvent PlayEvent(const std::string& name);
 	void StopAllEvents();
+
+	void SetVelocity(Vector3 invelocity);
+
 private:
 	std::vector<SoundEvent> mEvents2D;
 	std::vector<SoundEvent> mEvents3D;
+
+	Vector3 velocity;
 };
