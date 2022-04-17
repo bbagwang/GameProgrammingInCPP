@@ -67,9 +67,6 @@
     <ClCompile Include="AudioComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DopplerActor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -124,9 +121,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="AudioComponent.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DopplerActor.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

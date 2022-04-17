@@ -24,6 +24,4 @@ private:
 	class AudioComponent* mAudioComp;
 	SoundEvent mFootstep;
 	float mLastFootstep;
-
-	Vector3 mvelocity;
 };

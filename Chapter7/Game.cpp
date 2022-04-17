@@ -16,7 +16,6 @@
 #include "CameraActor.h"
 #include "PlaneActor.h"
 #include "AudioComponent.h"
-#include "DopplerActor.h"
 
 Game::Game()
 :mRenderer(nullptr)
@@ -217,20 +216,20 @@ void Game::GenerateOutput()
 void Game::LoadData()
 {
 	// Create actors
-	Actor* a = nullptr;//new Actor(this);
-	//a->SetPosition(Vector3(200.0f, 75.0f, 0.0f));
-	//a->SetScale(100.0f);
+	Actor* a = new Actor(this);
+	a->SetPosition(Vector3(200.0f, 75.0f, 0.0f));
+	a->SetScale(100.0f);
 	Quaternion q(Vector3::UnitY, -Math::PiOver2);
-	//q = Quaternion::Concatenate(q, Quaternion(Vector3::UnitZ, Math::Pi + Math::Pi / 4.0f));
-	//a->SetRotation(q);
-	MeshComponent* mc = nullptr;//new MeshComponent(a);
-	//mc->SetMesh(mRenderer->GetMesh("Assets/Cube.gpmesh"));
+	q = Quaternion::Concatenate(q, Quaternion(Vector3::UnitZ, Math::Pi + Math::Pi / 4.0f));
+	a->SetRotation(q);
+	MeshComponent* mc = new MeshComponent(a);
+	mc->SetMesh(mRenderer->GetMesh("Assets/Cube.gpmesh"));
 
-	//a = new Actor(this);
-	//a->SetPosition(Vector3(200.0f, -75.0f, 0.0f));
-	//a->SetScale(3.0f);
-	//mc = new MeshComponent(a);
-	//mc->SetMesh(mRenderer->GetMesh("Assets/Sphere.gpmesh"));
+	a = new Actor(this);
+	a->SetPosition(Vector3(200.0f, -75.0f, 0.0f));
+	a->SetScale(3.0f);
+	mc = new MeshComponent(a);
+	mc->SetMesh(mRenderer->GetMesh("Assets/Sphere.gpmesh"));
 
 	// Setup floor
 	const float start = -1250.0f;
@@ -280,13 +279,6 @@ void Game::LoadData()
 	// Camera actor
 	mCameraActor = new CameraActor(this);
 
-	//Doppler Actor
-	mDopplerActor = new DopplerActor(this);
-	mDopplerActor->SetPosition(Vector3(150.f, -1000.f, 0.f));
-	Quaternion dopr(Vector3::UnitY, -Math::PiOver2);
-	//q = Quaternion::Concatenate(q, Quaternion(Vector3::UnitZ, Math::Pi + Math::Pi / 4.0f));
-	mDopplerActor->SetRotation(q);
-
 	// UI elements
 	a = new Actor(this);
 	a->SetPosition(Vector3(-350.0f, -350.0f, 0.0f));
@@ -299,17 +291,17 @@ void Game::LoadData()
 	sc = new SpriteComponent(a);
 	sc->SetTexture(mRenderer->GetTexture("Assets/Radar.png"));
 
-	//// Create spheres with audio components playing different sounds
-	//a = new Actor(this);
-	//a->SetPosition(Vector3(500.0f, -75.0f, 0.0f));
-	//a->SetScale(1.0f);
-	//mc = new MeshComponent(a);
-	//mc->SetMesh(mRenderer->GetMesh("Assets/Sphere.gpmesh"));
-	//AudioComponent* ac = new AudioComponent(a);
-	//ac->PlayEvent("event:/FireLoop");
+	// Create spheres with audio components playing different sounds
+	a = new Actor(this);
+	a->SetPosition(Vector3(500.0f, -75.0f, 0.0f));
+	a->SetScale(1.0f);
+	mc = new MeshComponent(a);
+	mc->SetMesh(mRenderer->GetMesh("Assets/Sphere.gpmesh"));
+	AudioComponent* ac = new AudioComponent(a);
+	ac->PlayEvent("event:/FireLoop");
 
 	// Start music
-	//mMusicEvent = mAudioSystem->PlayEvent("event:/Music");
+	mMusicEvent = mAudioSystem->PlayEvent("event:/Music");
 }
 
 void Game::UnloadData()

@@ -84,22 +84,6 @@ void SoundEvent::SetParameter(const std::string& name, float value)
 	}
 }
 
-void SoundEvent::SetOcclusion(float directocclusion, float reverbocclusion)
-{
-	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
-	if (event)
-	{
-		//채널 그룹을 사용할 수 있도록 커맨드를 비운다
-		mSystem->mSystem->flushCommands();
-		//이벤트로부터 채널 그룹을 얻는다
-		FMOD::ChannelGroup* ChannelGroup = nullptr;
-		event->getChannelGroup(&ChannelGroup);
-		//차폐 인자를 설정한다
-		//occFactor는 0.0 (차폐 없음)에서 1.0 (완전한 차폐) 값을 가진다.
-		ChannelGroup->set3DOcclusion(directocclusion, reverbocclusion);
-	}
-}
-
 bool SoundEvent::GetPaused() const
 {
 	bool retVal = false;
@@ -150,12 +134,11 @@ bool SoundEvent::Is3D() const
 	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
 	if (event)
 	{
-		//이벤트 디스크립션을 얻는다.
+		// Get the event description
 		FMOD::Studio::EventDescription* ed = nullptr;
 		event->getDescription(&ed);
 		if (ed)
 		{
-			//이 이벤트는 3D 인가?
 			ed->is3D(&retVal);
 		}
 	}
@@ -166,8 +149,8 @@ namespace
 {
 	FMOD_VECTOR VecToFMOD(const Vector3& in)
 	{
-		//게임좌표	(+x 전방, +y 오른쪽, +z 위쪽) 를
-		//FMOD		(+z 전방, +x 오른쪽, +y 위쪽) 좌표로 변환
+		// Convert from our coordinates (+x forward, +y right, +z up)
+		// to FMOD (+z forward, +x right, +y up)
 		FMOD_VECTOR v;
 		v.x = in.y;
 		v.y = in.z;
@@ -176,22 +159,20 @@ namespace
 	}
 }
 
-void SoundEvent::Set3DAttributes(const Matrix4& worldTrans, Vector3 velocity)
+void SoundEvent::Set3DAttributes(const Matrix4& worldTrans)
 {
 	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
 	if (event)
 	{
 		FMOD_3D_ATTRIBUTES attr;
-		//위치, 전방, 상향 벡터 설정
+		// Set position, forward, up
 		attr.position = VecToFMOD(worldTrans.GetTranslation());
-		//세계 공간에서 첫 번째 행은 전방 벡터
+		// In world transform, first row is forward
 		attr.forward = VecToFMOD(worldTrans.GetXAxis());
-		//세 번째 행은 상향 벡터
+		// Third row is up
 		attr.up = VecToFMOD(worldTrans.GetZAxis());
-		//TODO : FIX
-		//속도를 0으로 설정 (도플러 효과를 사용한다면 수정)
-		attr.velocity = VecToFMOD(velocity);
-
+		// Set velocity to zero (fix if using Doppler effect)
+		attr.velocity = { 0.0f, 0.0f, 0.0f };
 		event->set3DAttributes(&attr);
 	}
 }

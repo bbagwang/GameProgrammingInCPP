@@ -27,13 +27,13 @@ AudioSystem::~AudioSystem()
 
 bool AudioSystem::Initialize()
 {
-	//에러에 대한 로깅을 설정
+	// Initialize debug logging
 	FMOD::Debug_Initialize(
-		FMOD_DEBUG_LEVEL_ERROR, //에러일 경우만 로그를 남김
-		FMOD_DEBUG_MODE_TTY //stdout으로 로그 출력
+		FMOD_DEBUG_LEVEL_ERROR, // Log only errors
+		FMOD_DEBUG_MODE_TTY // Output to stdout
 	);
 
-	//FMOD STUDIO 시스템 객체 인스턴스 생성
+	// Create FMOD studio system object
 	FMOD_RESULT result;
 	result = FMOD::Studio::System::create(&mSystem);
 	if (result != FMOD_OK)
@@ -42,30 +42,23 @@ bool AudioSystem::Initialize()
 		return false;
 	}
 
-	//FMOD 초기화
+	// Initialize FMOD studio system
 	result = mSystem->initialize(
-		512, //동시에 출력할 수 있는 사운드의 최대 갯수
-		FMOD_STUDIO_INIT_NORMAL, //기본 설정 사용
-		FMOD_INIT_NORMAL, //기본 설정
-		nullptr //대부분 nullptr
+		512, // Max number of concurrent sounds
+		FMOD_STUDIO_INIT_NORMAL, // Use default settings
+		FMOD_INIT_NORMAL, // Use default settings
+		nullptr // Usually null
 	);
-
 	if (result != FMOD_OK)
 	{
 		SDL_Log("Failed to initialize FMOD system: %s", FMOD_ErrorString(result));
 		return false;
 	}
 
-	//초기화 완료후 저수준 시스템 포인터를 얻어서 저장
+	// Save the low-level system pointer
 	mSystem->getLowLevelSystem(&mLowLevelSystem);
 
-	mLowLevelSystem->set3DSettings(
-		1.f,	//도플러 스케일, 1 = 정상, 1보다 더 크면 과장된 소리를 낸다
-		50.f,	//게임 단위의 크기 = 1미터 (7장만 50 으로 설정)
-		1.f		//(도플러와 관계없음, 1로 남겨둔다.)
-	);
-
-	//마스터 뱅크 로드 (Master Bank.string.bank 를 먼저 로드)
+	// Load the master banks (strings first)
 	LoadBank("Assets/Master Bank.strings.bank");
 	LoadBank("Assets/Master Bank.bank");
 
@@ -85,46 +78,45 @@ void AudioSystem::Shutdown()
 
 void AudioSystem::LoadBank(const std::string& name)
 {
-	//두 번 로딩되지 않게 한다
+	// Prevent double-loading
 	if (mBanks.find(name) != mBanks.end())
 	{
 		return;
 	}
 
-	//뱅크 로드 시도
+	// Try to load bank
 	FMOD::Studio::Bank* bank = nullptr;
 	FMOD_RESULT result = mSystem->loadBankFile(
-		name.c_str(), //뱅크의 파일 이름
-		FMOD_STUDIO_LOAD_BANK_NORMAL, //일반적인 방식으로 로딩
-		&bank //뱅크 포인터 저장
+		name.c_str(), // File name of bank
+		FMOD_STUDIO_LOAD_BANK_NORMAL, // Normal loading
+		&bank // Save pointer to bank
 	);
 
 	const int maxPathLength = 512;
 	if (result == FMOD_OK)
 	{
-		//뱅크를 맵에 추가
+		// Add bank to map
 		mBanks.emplace(name, bank);
-		//스트리밍 형식이 아닌 모든 샘플 데이터를 로드
+		// Load all non-streaming sample data
 		bank->loadSampleData();
-		//뱅크의 이벤트 수를 얻는다.
+		// Get the number of events in this bank
 		int numEvents = 0;
 		bank->getEventCount(&numEvents);
 		if (numEvents > 0)
 		{
-			//뱅크에서 EventDescription 리스트를 얻는다.
+			// Get list of event descriptions in this bank
 			std::vector<FMOD::Studio::EventDescription*> events(numEvents);
 			bank->getEventList(events.data(), numEvents, &numEvents);
 			char eventName[maxPathLength];
 			for (int i = 0; i < numEvents; i++)
 			{
 				FMOD::Studio::EventDescription* e = events[i];
-				//event:/Explosion2D 같은 이벤트의 경로를 얻는다.
+				// Get the path of this event (like event:/Explosion2D)
 				e->getPath(eventName, maxPathLength, nullptr);
-				//이벤트를 맵에 추가한다.
+				// Add to event map
 				mEvents.emplace(eventName, e);
 			}
 		}
-
 		// Get the number of buses in this bank
 		int numBuses = 0;
 		bank->getBusCount(&numBuses);
@@ -148,30 +140,30 @@ void AudioSystem::LoadBank(const std::string& name)
 
 void AudioSystem::UnloadBank(const std::string& name)
 {
-	//이미 로드되어있지 않으면 리턴
+	// Ignore if not loaded
 	auto iter = mBanks.find(name);
 	if (iter == mBanks.end())
 	{
 		return;
 	}
 
-	//뱅크에 있는 모든 이벤트 해제
+	// First we need to remove all events from this bank
 	FMOD::Studio::Bank* bank = iter->second;
 	int numEvents = 0;
 	bank->getEventCount(&numEvents);
 	if (numEvents > 0)
 	{
-		//뱅크에 대한 EventDescription 들을 가져옴
+		// Get event descriptions for this bank
 		std::vector<FMOD::Studio::EventDescription*> events(numEvents);
-		//이벤트 리스트를 가져옴
+		// Get list of events
 		bank->getEventList(events.data(), numEvents, &numEvents);
 		char eventName[512];
 		for (int i = 0; i < numEvents; i++)
 		{
 			FMOD::Studio::EventDescription* e = events[i];
-			//이벤트 경로를 가져옴
+			// Get the path of this event
 			e->getPath(eventName, 512, nullptr);
-			//이벤트를 제거함.
+			// Remove this event
 			auto eventi = mEvents.find(eventName);
 			if (eventi != mEvents.end())
 			{
@@ -225,18 +217,17 @@ void AudioSystem::UnloadAllBanks()
 SoundEvent AudioSystem::PlayEvent(const std::string& name)
 {
 	unsigned int retID = 0;
-	//이벤트가 존재하는지 확인
 	auto iter = mEvents.find(name);
 	if (iter != mEvents.end())
 	{
-		//이벤트 인스턴스 생성
+		// Create instance of event
 		FMOD::Studio::EventInstance* event = nullptr;
 		iter->second->createInstance(&event);
 		if (event)
 		{
-			//이벤트 인스턴스 시작
+			// Start the event instance
 			event->start();
-			//새 아이디를 얻어 맵에 추가한다.
+			// Get the next id, and add to map
 			sNextID++;
 			retID = sNextID;
 			mEventInstances.emplace(retID, event);
@@ -247,29 +238,29 @@ SoundEvent AudioSystem::PlayEvent(const std::string& name)
 
 void AudioSystem::Update(float deltaTime)
 {
-	//정지된 이벤트를 찾는다.
+	// Find any stopped event instances
 	std::vector<unsigned int> done;
 	for (auto& iter : mEventInstances)
 	{
 		FMOD::Studio::EventInstance* e = iter.second;
-		//이 이벤트의 상태값을 얻는다.
+		// Get the state of this event
 		FMOD_STUDIO_PLAYBACK_STATE state;
 		e->getPlaybackState(&state);
 		if (state == FMOD_STUDIO_PLAYBACK_STOPPED)
 		{
-			//이벤트를 해제하고 id를 done 맵에 추가한다.
+			// Release the event and add id to done
 			e->release();
 			done.emplace_back(iter.first);
 		}
 	}
 	
-	//완료된 이벤트 인스턴스를 맵에서 제거
+	// Remove done event instances from map
 	for (auto id : done)
 	{
 		mEventInstances.erase(id);
 	}
 
-	//FMOD 업데이트
+	// Update FMOD
 	mSystem->update();
 }
 
@@ -287,33 +278,21 @@ namespace
 	}
 }
 
-void AudioSystem::SetListener(const Matrix4& viewMatrix, Vector3 velocity)
+void AudioSystem::SetListener(const Matrix4& viewMatrix)
 {
-	//뷰 행렬의 역행렬을 구해서 필요로 하는 세계 공간의 벡터를 얻는다.
+	// Invert the view matrix to get the correct vectors
 	Matrix4 invView = viewMatrix;
 	invView.Invert();
-
 	FMOD_3D_ATTRIBUTES listener;
-	
-	//위치와 전방 벡터, 상향 벡터를 설정
-	
-	//뷰 행렬의 역행렬에서 네 번째 행(GetTranslation 으로 얻을 수 있음)의
-	//처음 세 요소는 카메라의 세계 공간 위치에 해당한다.
+	// Set position, forward, up
 	listener.position = VecToFMOD(invView.GetTranslation());
-	
-	//세번째 행(GetZAxis 로 얻을 수 있음) 의
-	//처음 세 요소는 전방 벡터
+	// In the inverted view, third row is forward
 	listener.forward = VecToFMOD(invView.GetZAxis());
-	
-	//두번째 행(GetYAxis 로 얻을 수 있음) 의
-	//처음 세 요소는 상향 벡터
+	// In the inverted view, second row is up
 	listener.up = VecToFMOD(invView.GetYAxis());
-	
-	//TODO : FIX
-	//속도를 0으로 설정 (도플러 효과를 사용할 시 수정)
-	listener.velocity = VecToFMOD(velocity);
-	
-	//FMOD로 보낸다 (0 = 리스너 인덱스 번호. 지금은 하나니까 0으로 설정)
+	// Set velocity to zero (fix if using Doppler effect)
+	listener.velocity = {0.0f, 0.0f, 0.0f};
+	// Send to FMOD
 	mSystem->setListenerAttributes(0, &listener);
 }
 

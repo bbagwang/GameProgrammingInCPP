@@ -62,7 +62,7 @@ void AudioComponent::OnUpdateWorldTransform()
 	{
 		if (event.IsValid())
 		{
-			event.Set3DAttributes(world, velocity);
+			event.Set3DAttributes(world);
 		}
 	}
 }
@@ -75,7 +75,7 @@ SoundEvent AudioComponent::PlayEvent(const std::string& name)
 	{
 		mEvents3D.emplace_back(e);
 		// Set initial 3D attributes
-		e.Set3DAttributes(mOwner->GetWorldTransform(), velocity);
+		e.Set3DAttributes(mOwner->GetWorldTransform());
 	}
 	else
 	{
@@ -98,9 +98,4 @@ void AudioComponent::StopAllEvents()
 	// Clear events
 	mEvents2D.clear();
 	mEvents3D.clear();
-}
-
-void AudioComponent::SetVelocity(Vector3 invelocity)
-{
-	velocity = invelocity;
 }

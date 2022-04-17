@@ -12,7 +12,7 @@
 #include "SoundEvent.h"
 #include "Math.h"
 
-//FMOD 헤더를 헤더에서 참조하지 않기 위해, 타입들을 전방선언함.
+// Forward declarations to avoid including FMOD header
 namespace FMOD
 {
 	class System;
@@ -45,7 +45,7 @@ public:
 	void Update(float deltaTime);
 
 	// For positional audio
-	void SetListener(const Matrix4& viewMatrix, Vector3 velocity);
+	void SetListener(const Matrix4& viewMatrix);
 	// Control buses
 	float GetBusVolume(const std::string& name) const;
 	bool GetBusPaused(const std::string& name) const;
@@ -59,16 +59,16 @@ private:
 	static unsigned int sNextID;
 
 	class Game* mGame;
-	//로드된 뱅크를 관리하는 맵
+	// Map of loaded banks
 	std::unordered_map<std::string, FMOD::Studio::Bank*> mBanks;
-	//이벤트 이름과 EventDescription 맵
+	// Map of event name to EventDescription
 	std::unordered_map<std::string, FMOD::Studio::EventDescription*> mEvents;
 	// Map of event id to EventInstance
 	std::unordered_map<unsigned int, FMOD::Studio::EventInstance*> mEventInstances;
 	// Map of buses
 	std::unordered_map<std::string, FMOD::Studio::Bus*> mBuses;
-	//FMOD 스튜디오 시스템
+	// FMOD studio system
 	FMOD::Studio::System* mSystem;
-	//FMOD 저수준 시스템 (거의 접근할 일 없음)
+	// FMOD Low-level system (in case needed)
 	FMOD::System* mLowLevelSystem;
 };
