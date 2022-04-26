@@ -8,7 +8,10 @@
 
 #include "InputSystem.h"
 #include <SDL/SDL.h>
-#include <cstring>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <iostream>
 
 bool KeyboardState::GetKeyValue(SDL_Scancode keyCode) const
 {
@@ -133,6 +136,8 @@ bool InputSystem::Initialize()
 		memset(mState.Controllers[i].mPrevButtons, 0,
 			SDL_CONTROLLER_BUTTON_MAX);
 	}
+
+	LoadInputMapping();
 
 	return true;
 }
@@ -266,12 +271,93 @@ void InputSystem::RefreshControllers()
 	}
 }
 
+void InputSystem::LoadInputMapping()
+{
+	std::ifstream InputMappingFile("InputMapping.txt");
+	std::string str;
+
+	if (InputMappingFile.is_open())
+	{
+		InputMappingFile >> str;
+	}
+
+	std::istringstream ss(str);
+	std::string token;
+
+	std::string ActionName;
+	std::string InputType;
+	std::string KeyName;
+
+	enum class STEP { ACTION_NAME = 0, INPUT_TYPE = 1, KEY_NAME = 2, ASSEMBLY = 3 };
+	STEP Step = STEP::ACTION_NAME;
+
+	while (std::getline(ss, token, ','))
+	{
+		switch (Step)
+		{
+		case STEP::ACTION_NAME:
+			ActionName = token;
+			Step = STEP::INPUT_TYPE;
+			break;
+		case STEP::INPUT_TYPE:
+			InputType = token;
+			Step = STEP::KEY_NAME;
+			break;
+		case STEP::KEY_NAME:
+		{
+			KeyName = token;
+
+			InputBindData NewBindData;
+			auto FindResultIter = InputBindMap.find(ActionName);
+			if (FindResultIter != InputBindMap.end())
+			{
+				NewBindData = FindResultIter->second;
+			}
+
+			if (InputType == "Controller")
+			{
+				if (KeyName == "A")
+				{
+					NewBindData.ControllerButton = SDL_CONTROLLER_BUTTON_A;
+				}
+			}
+			else if (InputType == "KeyBoard")
+			{
+				if (KeyName == "Space")
+				{
+					NewBindData.KeyboardButton = SDL_SCANCODE_SPACE;
+				}
+			}
+
+			InputBindMap.insert({ ActionName, NewBindData });
+
+			InputMappingFile >> str;
+
+			Step = STEP::ACTION_NAME;
+		}
+		default:
+			break;
+		}
+	}
+}
+
 void InputSystem::SetRelativeMouseMode(bool value)
 {
 	SDL_bool set = value ? SDL_TRUE : SDL_FALSE;
 	SDL_SetRelativeMouseMode(set);
 
 	mState.Mouse.mIsRelative = value;
+}
+
+ButtonState InputSystem::GetMappedButtonState(const std::string& ActionName, int ControllerDeviceID /*= 0*/)
+{
+	auto ResultIter = InputBindMap.find(ActionName);
+	if (ResultIter != InputBindMap.end())
+	{
+		return mState.Controllers[ControllerDeviceID].GetButtonState(ResultIter->second.ControllerButton);
+	}
+
+	return ButtonState::ENone;
 }
 
 float InputSystem::Filter1D(int input)

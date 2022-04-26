@@ -12,6 +12,7 @@
 #include <SDL/SDL_mouse.h>
 #include "Math.h"
 #include "SDL/SDL_events.h"
+#include <unordered_map>
 
 static constexpr int MAX_CONTROLLER_COUNT = 4;
 
@@ -103,6 +104,12 @@ struct InputState
 	ControllerState Controllers[MAX_CONTROLLER_COUNT];
 };
 
+struct InputBindData
+{
+	SDL_Scancode KeyboardButton = SDL_SCANCODE_UNKNOWN;
+	SDL_GameControllerButton ControllerButton = SDL_CONTROLLER_BUTTON_INVALID;
+};
+
 class InputSystem
 {
 public:
@@ -120,13 +127,18 @@ public:
 	void OnDeviceDisconnected(SDL_ControllerDeviceEvent& Device);
 
 	void RefreshControllers();
+	void LoadInputMapping();
 
 	const InputState& GetState() const { return mState; }
 
 	void SetRelativeMouseMode(bool value);
+
+	ButtonState GetMappedButtonState(const std::string& ActionName, int ControllerDeviceID = 0);
+
 private:
 	float Filter1D(int input);
 	Vector2 Filter2D(int inputX, int inputY);
 	InputState mState;
 	SDL_GameController* mControllers[4];
+	std::unordered_map<std::string, InputBindData> InputBindMap;
 };

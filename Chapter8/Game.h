@@ -33,6 +33,9 @@ public:
 	void AddAsteroid(class Asteroid* ast);
 	void RemoveAsteroid(class Asteroid* ast);
 	std::vector<class Asteroid*>& GetAsteroids() { return mAsteroids; }
+
+	class InputSystem* GetInputSystem() const { return mInputSystem; }
+
 private:
 	void ProcessInput();
 	void UpdateGame();

@@ -40,8 +40,14 @@ void Ship::UpdateActor(float deltaTime)
 
 void Ship::ActorInput(const InputState& state)
 {
-	if (state.Controllers[mControllerDeviceID].GetRightTrigger() > 0.25f
-		&& mLaserCooldown <= 0.0f)
+	ButtonState FireState;
+
+	if (GetGame() && GetGame()->GetInputSystem())
+	{
+		FireState = GetGame()->GetInputSystem()->GetMappedButtonState("Fire", mControllerDeviceID);
+	}
+
+	if (FireState == EPressed && mLaserCooldown <= 0.0f)
 	{
 		// Create a laser and set its position/rotation to mine
 		Laser* laser = new Laser(GetGame());
