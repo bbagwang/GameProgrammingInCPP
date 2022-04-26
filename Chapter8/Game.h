@@ -69,6 +69,6 @@ private:
 	bool mUpdatingActors;
 
 	// Game-specific
-	class Ship* mShip;
+	class Ship* mShips[4];
 	std::vector<class Asteroid*> mAsteroids;
 };

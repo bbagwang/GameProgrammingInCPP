@@ -122,9 +122,13 @@ void Game::ProcessInput()
 			case SDL_QUIT:
 				mIsRunning = false;
 				break;
+				
+			case SDL_CONTROLLERDEVICEADDED:
+			case SDL_CONTROLLERDEVICEREMOVED:
 			case SDL_MOUSEWHEEL:
 				mInputSystem->ProcessEvent(event);
 				break;
+
 			default:
 				break;
 		}
@@ -253,8 +257,22 @@ void Game::CreateSpriteVerts()
 void Game::LoadData()
 {
 	// Create player's ship
-	mShip = new Ship(this);
-	mShip->SetRotation(Math::PiOver2);
+
+	mShips[0] = new Ship(this, 0);
+	mShips[0]->SetRotation(Math::PiOver2);
+	mShips[0]->SetPosition(Vector2(-100,100));
+
+	mShips[1] = new Ship(this, 1);
+	mShips[1]->SetRotation(Math::PiOver2);
+	mShips[1]->SetPosition(Vector2(100, 100));
+
+	mShips[2] = new Ship(this, 2);
+	mShips[2]->SetRotation(Math::PiOver2);
+	mShips[2]->SetPosition(Vector2(100, -100));
+
+	mShips[3] = new Ship(this, 3);
+	mShips[3]->SetRotation(Math::PiOver2);
+	mShips[3]->SetPosition(Vector2(-100, -100));
 
 	// Create asteroids
 	const int numAsteroids = 20;

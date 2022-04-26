@@ -11,6 +11,9 @@
 #include <SDL/SDL_gamecontroller.h>
 #include <SDL/SDL_mouse.h>
 #include "Math.h"
+#include "SDL/SDL_events.h"
+
+static constexpr int MAX_CONTROLLER_COUNT = 4;
 
 // The different button states
 enum ButtonState
@@ -97,7 +100,7 @@ struct InputState
 {
 	KeyboardState Keyboard;
 	MouseState Mouse;
-	ControllerState Controller;
+	ControllerState Controllers[MAX_CONTROLLER_COUNT];
 };
 
 class InputSystem
@@ -113,6 +116,11 @@ public:
 	// Called to process an SDL event in input system
 	void ProcessEvent(union SDL_Event& event);
 
+	void OnDeviceConnected(SDL_ControllerDeviceEvent& Device);
+	void OnDeviceDisconnected(SDL_ControllerDeviceEvent& Device);
+
+	void RefreshControllers();
+
 	const InputState& GetState() const { return mState; }
 
 	void SetRelativeMouseMode(bool value);
@@ -120,5 +128,5 @@ private:
 	float Filter1D(int input);
 	Vector2 Filter2D(int inputX, int inputY);
 	InputState mState;
-	SDL_GameController* mController;
+	SDL_GameController* mControllers[4];
 };

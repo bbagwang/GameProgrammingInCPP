@@ -12,10 +12,12 @@
 #include "Laser.h"
 #include "InputSystem.h"
 
-Ship::Ship(Game* game)
+
+Ship::Ship(class Game* game, int ControllerDeviceID /*= 0*/)
 	:Actor(game)
-	,mSpeed(400.0f)
-	,mLaserCooldown(0.0f)
+	, mSpeed(400.0f)
+	, mLaserCooldown(0.0f)
+	, mControllerDeviceID(ControllerDeviceID)
 {
 	// Create a sprite component
 	SpriteComponent* sc = new SpriteComponent(this, 150);
@@ -38,7 +40,7 @@ void Ship::UpdateActor(float deltaTime)
 
 void Ship::ActorInput(const InputState& state)
 {
-	if (state.Controller.GetRightTrigger() > 0.25f
+	if (state.Controllers[mControllerDeviceID].GetRightTrigger() > 0.25f
 		&& mLaserCooldown <= 0.0f)
 	{
 		// Create a laser and set its position/rotation to mine
@@ -50,12 +52,12 @@ void Ship::ActorInput(const InputState& state)
 		mLaserCooldown = 0.25f;
 	}
 
-	if (state.Controller.GetIsConnected())
+	if (state.Controllers[mControllerDeviceID].GetIsConnected())
 	{
-		mVelocityDir = state.Controller.GetLeftStick();
-		if (!Math::NearZero(state.Controller.GetRightStick().Length()))
+		mVelocityDir = state.Controllers[mControllerDeviceID].GetLeftStick();
+		if (!Math::NearZero(state.Controllers[mControllerDeviceID].GetRightStick().Length()))
 		{
-			mRotationDir = state.Controller.GetRightStick();
+			mRotationDir = state.Controllers[mControllerDeviceID].GetRightStick();
 		}
 	}
 }
