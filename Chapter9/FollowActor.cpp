@@ -46,7 +46,7 @@ void FollowActor::ActorInput(const uint8_t* keys)
 	{
 		angularSpeed += Math::Pi;
 	}
-
+	
 	mMoveComp->SetForwardSpeed(forwardSpeed);
 	mMoveComp->SetAngularSpeed(angularSpeed);
 
@@ -58,6 +58,38 @@ void FollowActor::ActorInput(const uint8_t* keys)
 	else
 	{
 		mCameraComp->SetHorzDist(350.0f);
+	}
+
+	int x, y;
+	Uint32 MouseState = SDL_GetRelativeMouseState(&x, &y);
+	bool bRightMouseButtonPressed = SDL_BUTTON(SDL_BUTTON_RIGHT) & MouseState;
+	mCameraComp->SetOrbit(bRightMouseButtonPressed);
+	if (bRightMouseButtonPressed)
+	{
+		// Assume mouse movement is usually between -500 and +500
+		const int maxMouseSpeed = 500;
+		// Rotation/sec at maximum speed
+		const float maxOrbitSpeed = Math::Pi * 8;
+		float yawSpeed = 0.0f;
+		if (x != 0)
+		{
+			// Convert to ~[-1.0, 1.0]
+			yawSpeed = static_cast<float>(x) / maxMouseSpeed;
+			// Multiply by rotation/sec
+			yawSpeed *= maxOrbitSpeed;
+		}
+
+		mCameraComp->SetYawSpeed(-yawSpeed);
+
+		// Compute pitch
+		float pitchSpeed = 0.0f;
+		if (y != 0)
+		{
+			// Convert to ~[-1.0, 1.0]
+			pitchSpeed = static_cast<float>(y) / maxMouseSpeed;
+			pitchSpeed *= maxOrbitSpeed;
+		}
+		mCameraComp->SetPitchSpeed(pitchSpeed);
 	}
 }
 
