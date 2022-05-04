@@ -68,8 +68,8 @@ void SplineCamera::Update(float deltaTime)
 			}
 			else
 			{
-				//경로 진행을 완료했으므로 카메라 이동을 중지시킨다.
-				mPaused = true;
+				std::reverse(mPath.mControlPoints.begin(),mPath.mControlPoints.end());
+				Restart();
 			}
 		}
 	}
