@@ -66,21 +66,25 @@ void PhysWorld::TestPairwise(std::function<void(Actor*, Actor*)> f)
 
 void PhysWorld::TestSweepAndPrune(std::function<void(Actor*, Actor*)> f)
 {
-	// Sort by min.x
-	std::sort(mBoxes.begin(), mBoxes.end(),
+	std::vector<class BoxComponent*> mBoxesX(mBoxes);
+	std::vector<class BoxComponent*> mBoxesY;
+	std::vector<class BoxComponent*> mBoxesZ;
+
+	std::sort(mBoxesX.begin(), mBoxesX.end(),
 		[](BoxComponent* a, BoxComponent* b) {
 			return a->GetWorldBox().mMin.x <
 				b->GetWorldBox().mMin.x;
 	});
 
-	for (size_t i = 0; i < mBoxes.size(); i++)
+	//X 축 Intersect 체크
+	for (size_t i = 0; i < mBoxesX.size(); i++)
 	{
 		// Get max.x for current box
-		BoxComponent* a = mBoxes[i];
+		BoxComponent* a = mBoxesX[i];
 		float max = a->GetWorldBox().mMax.x;
-		for (size_t j = i + 1; j < mBoxes.size(); j++)
+		for (size_t j = i + 1; j < mBoxesX.size(); j++)
 		{
-			BoxComponent* b = mBoxes[j];
+			BoxComponent* b = mBoxesX[j];
 			// If AABB[j] min is past the max bounds of AABB[i],
 			// then there aren't any other possible intersections
 			// against AABB[i]
@@ -90,6 +94,53 @@ void PhysWorld::TestSweepAndPrune(std::function<void(Actor*, Actor*)> f)
 			}
 			else if (Intersect(a->GetWorldBox(), b->GetWorldBox()))
 			{
+				mBoxesY.push_back(b);
+			}
+		}
+	}
+	
+	//Y 축 Intersect 체크
+	for (size_t i = 0; i < mBoxesY.size(); i++)
+	{
+		// Get max.x for current box
+		BoxComponent* a = mBoxesY[i];
+		float max = a->GetWorldBox().mMax.y;
+		for (size_t j = i + 1; j < mBoxesY.size(); j++)
+		{
+			BoxComponent* b = mBoxesY[j];
+			// If AABB[j] min is past the max bounds of AABB[i],
+			// then there aren't any other possible intersections
+			// against AABB[i]
+			if (b->GetWorldBox().mMin.y > max)
+			{
+				break;
+			}
+			else if (Intersect(a->GetWorldBox(), b->GetWorldBox()))
+			{
+				mBoxesZ.push_back(b);
+			}
+		}
+	}
+	
+	//Z 축 Intersect 체크
+	for (size_t i = 0; i < mBoxesZ.size(); i++)
+	{
+		// Get max.x for current box
+		BoxComponent* a = mBoxesZ[i];
+		float max = a->GetWorldBox().mMax.z;
+		for (size_t j = i + 1; j < mBoxesZ.size(); j++)
+		{
+			BoxComponent* b = mBoxesZ[j];
+			// If AABB[j] min is past the max bounds of AABB[i],
+			// then there aren't any other possible intersections
+			// against AABB[i]
+			if (b->GetWorldBox().mMin.z > max)
+			{
+				break;
+			}
+			else if (Intersect(a->GetWorldBox(), b->GetWorldBox()))
+			{
+				//다 통과하면 충돌 처리.
 				f(a->GetOwner(), b->GetOwner());
 			}
 		}
@@ -103,11 +154,13 @@ void PhysWorld::AddBox(BoxComponent* box)
 
 void PhysWorld::RemoveBox(BoxComponent* box)
 {
-	auto iter = std::find(mBoxes.begin(), mBoxes.end(), box);
-	if (iter != mBoxes.end())
 	{
-		// Swap to end of vector and pop off (avoid erase copies)
-		std::iter_swap(iter, mBoxes.end() - 1);
-		mBoxes.pop_back();
+		auto iter = std::find(mBoxes.begin(), mBoxes.end(), box);
+		if (iter != mBoxes.end())
+		{
+			// Swap to end of vector and pop off (avoid erase copies)
+			std::iter_swap(iter, mBoxes.end() - 1);
+			mBoxes.pop_back();
+		}
 	}
 }
