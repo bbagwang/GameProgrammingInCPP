@@ -388,6 +388,195 @@ bool Intersect(const LineSegment& l, const Plane& p, float& outT)
 	}
 }
 
+bool Intersect(const OBB& a, const OBB& b)
+{
+	float ra, rb;
+	float R[3][3], AbsR[3][3];
+
+	static const float Epsilon = std::numeric_limits<float>::epsilon();
+
+	std::vector<Vector3> AxisA;
+	std::vector<Vector3> AxisB;
+
+	auto CalculateAxis = [](const OBB& InOBB, std::vector<Vector3>& OutAxis)
+	{
+		Vector3::Transform(Vector3::UnitX, InOBB.mRotation);
+		Vector3::Transform(Vector3::UnitY, InOBB.mRotation);
+		Vector3::Transform(Vector3::UnitZ, InOBB.mRotation);
+	};
+
+	CalculateAxis(a, AxisA);
+	CalculateAxis(b, AxisB);
+
+	// a의 좌표 프레임에서 b를 나타내는 회전 행렬 계산
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			R[i][j] = Vector3::Dot(AxisA[i], AxisB[j]);
+		}
+	}
+
+	//이동 벡터 t 계산
+	Vector3 t = b.mCenter - a.mCenter;
+
+	//A의 좌표 프레임에 이동 변환 가져오기
+	t = Vector3(Vector3::Dot(t, AxisA[0]), Vector3::Dot(t, AxisA[1]), Vector3::Dot(t, AxisA[2]));
+	
+	//공통 하위 식을 계산.
+	//두 모서리가 평행하고 교차곱이 0인 경우
+	//산술 오류를 해결하기 위해 엡실론 항을 추가.
+	for(int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			AbsR[i][j] = Math::Abs(R[i][j]) + Epsilon;
+		}
+	}
+	
+	auto TestSingleAxisA = [&]() -> bool
+	{
+		//AX
+		float rax = a.mExtents.x;
+		float rbx = b.mExtents.x * AbsR[0][0] + b.mExtents.y * AbsR[0][1] + b.mExtents.z * AbsR[0][2];
+		if (Math::Abs(t.x) > rax + rbx)
+		{
+			return false;
+		}
+
+		//AY
+		float ray = a.mExtents.y;
+		float rby = b.mExtents.x * AbsR[1][0] + b.mExtents.y * AbsR[1][1] + b.mExtents.z * AbsR[1][2];
+		if (Math::Abs(t.y) > ray + rby)
+		{
+			return false;
+		}
+
+		//AZ
+		float raz = a.mExtents.z;
+		float rbz = b.mExtents.x * AbsR[2][0] + b.mExtents.y * AbsR[2][1] + b.mExtents.z * AbsR[2][2];
+		if (Math::Abs(t.z) > raz + rbz)
+		{
+			return false;
+		}
+
+		return true;
+	};
+	
+	if (!TestSingleAxisA())
+	{
+		return false;
+	}
+
+	auto TestSingleAxisB = [&]() -> bool
+	{
+		//BX
+		float rax = a.mExtents.x * AbsR[0][0] + a.mExtents.y * AbsR[1][0] + a.mExtents.z * AbsR[2][0];
+		float rbx = b.mExtents.x;
+		if (Math::Abs(t.x * R[0][0] + t.y * R[1][0] + t.z * R[2][0]) > rax + rbx)
+		{
+			return false;
+		}
+
+		//BY
+		float ray = a.mExtents.x * AbsR[0][1] + a.mExtents.y * AbsR[1][1] + a.mExtents.z * AbsR[2][1];
+		float rby = b.mExtents.y;
+		if (Math::Abs(t.x * R[0][1] + t.y * R[1][1] + t.z * R[2][1]) > ray + rby)
+		{
+			return false;
+		}
+
+		//BZ
+		float raz = a.mExtents.x * AbsR[0][2] + a.mExtents.y * AbsR[1][2] + a.mExtents.z * AbsR[2][2];
+		float rbz = b.mExtents.z;
+		if (Math::Abs(t.x * R[0][2] + t.y * R[1][2] + t.z * R[2][2]) > raz + rbz)
+		{
+			return false;
+		}
+
+		return true;
+	};
+	
+	if (!TestSingleAxisB())
+	{
+		return false;
+	}
+
+	//AX X BX
+	ra = a.mExtents.y * AbsR[2][0] + a.mExtents.z * AbsR[1][0];
+	rb = b.mExtents.y * AbsR[0][2] + b.mExtents.z * AbsR[0][1];
+	if(Math::Abs(t.z * R[1][0] - t.y * R[2][0]) > ra + rb)
+	{
+		return false;
+	}
+
+	//AX X BY
+	ra = a.mExtents.y * AbsR[2][1] + a.mExtents.z * AbsR[1][1];
+	rb = b.mExtents.y * AbsR[0][2] + b.mExtents.z * AbsR[0][0];
+	if (Math::Abs(t.z * R[1][1] - t.y * R[2][1]) > ra + rb)
+	{
+		return false;
+	}
+
+	//AX X BZ
+	ra = a.mExtents.y * AbsR[2][2] + a.mExtents.z * AbsR[1][2];
+	rb = b.mExtents.x * AbsR[0][1] + b.mExtents.y * AbsR[0][0];
+	if (Math::Abs(t.z * R[1][2] - t.y * R[2][2]) > ra + rb)
+	{
+		return false;
+	}
+	
+	//AY X BX
+	ra = a.mExtents.x * AbsR[2][0] + a.mExtents.z * AbsR[0][0];
+	rb = b.mExtents.y * AbsR[1][2] + b.mExtents.z * AbsR[1][1];
+	if (Math::Abs(t.x * R[2][0] - t.z * R[0][0]) > ra + rb)
+	{
+		return false;
+	}
+
+	//AY X BY
+	ra = a.mExtents.x * AbsR[2][1] + a.mExtents.z * AbsR[0][1];
+	rb = b.mExtents.x * AbsR[1][2] + b.mExtents.z * AbsR[1][0];
+	if (Math::Abs(t.x * R[2][1] - t.z * R[0][1]) > ra + rb)
+	{
+		return false;
+	}
+	
+	//AY X BZ
+	ra = a.mExtents.x * AbsR[2][2] + a.mExtents.z * AbsR[0][2];
+	rb = b.mExtents.x * AbsR[1][1] + b.mExtents.y * AbsR[1][0];
+	if (Math::Abs(t.x * R[2][2] - t.z * R[0][2]) > ra + rb)
+	{
+		return false;
+	}
+	
+	//AZ X BX
+	ra = a.mExtents.x * AbsR[1][0] + a.mExtents.y * AbsR[0][0];
+	rb = b.mExtents.y * AbsR[2][2] + b.mExtents.z * AbsR[2][1];
+	if (Math::Abs(t.y * R[0][0] - t.x * R[1][0]) > ra + rb)
+	{
+		return false;
+	}
+
+	//AZ X BY
+	ra = a.mExtents.x * AbsR[1][1] + a.mExtents.y * AbsR[0][1];
+	rb = b.mExtents.x * AbsR[2][2] + b.mExtents.z * AbsR[2][0];
+	if (Math::Abs(t.y * R[0][1] - t.x * R[1][1]) > ra + rb)
+	{
+		return false;
+	}
+
+	//AZ X BZ
+	ra = a.mExtents.x * AbsR[1][2] + a.mExtents.y * AbsR[0][2];
+	rb = b.mExtents.x * AbsR[2][1] + b.mExtents.y * AbsR[2][0];
+	if (Math::Abs(t.y * R[0][2] - t.x * R[1][2]) > ra + rb)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 bool TestSidePlane(float start, float end, float negd, const Vector3& norm,
 	std::vector<std::pair<float, Vector3>>& out)
 {
