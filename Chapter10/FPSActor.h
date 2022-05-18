@@ -34,4 +34,6 @@ private:
 	class Actor* mFPSModel;
 	SoundEvent mFootstep;
 	float mLastFootstep;
+
+	bool bJumping;
 };

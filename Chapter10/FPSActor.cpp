@@ -95,7 +95,13 @@ void FPSActor::ActorInput(const uint8_t* keys)
 	{
 		strafeSpeed += 400.0f;
 	}
-
+	if (keys[SDL_SCANCODE_SPACE] && !bJumping)
+	{
+		mMoveComp->SetGravityEnable(true);
+		mMoveComp->SetVerticalSpeed(500.f);
+		bJumping = true;
+	}
+	
 	mMoveComp->SetForwardSpeed(forwardSpeed);
 	mMoveComp->SetStrafeSpeed(strafeSpeed);
 
@@ -208,6 +214,9 @@ void FPSActor::FixCollisions()
 			else
 			{
 				pos.z += dz;
+				bJumping = false;
+				mMoveComp->SetGravityEnable(false);
+				mMoveComp->SetVerticalSpeed(0.f);
 			}
 
 			// Need to set position and update box component

@@ -19,11 +19,22 @@ public:
 	float GetAngularSpeed() const { return mAngularSpeed; }
 	float GetForwardSpeed() const { return mForwardSpeed; }
 	float GetStrafeSpeed() const { return mStrafeSpeed; }
+	float GetVerticalSpeed() const { return mVerticalSpeed; }
 	void SetAngularSpeed(float speed) { mAngularSpeed = speed; }
-	void SetForwardSpeed(float speed) { mForwardSpeed = speed; }
 	void SetStrafeSpeed(float speed) { mStrafeSpeed = speed; }
+	void SetForwardSpeed(float speed) { mForwardSpeed = speed; }
+	void SetVerticalSpeed(float speed) { mVerticalSpeed = speed; }
+
+	void SetGravityEnable(bool bEnable) { bUseGravity = bEnable; }
+	bool IsGravityEnable() const { return bUseGravity; }
+	
 protected:
 	float mAngularSpeed;
 	float mForwardSpeed;
 	float mStrafeSpeed;
+	float mVerticalSpeed;
+	
+	float mGravityAcceleration = 980.f;
+	
+	bool bUseGravity;
 };
