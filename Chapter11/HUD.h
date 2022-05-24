@@ -10,6 +10,19 @@
 #include "UIScreen.h"
 #include <vector>
 
+struct RadarBlipData
+{
+public:
+	RadarBlipData():Position2D(),bIsUpper(false){}
+	RadarBlipData(const Vector2& InPosition2D, bool bInIsUpper)
+		: Position2D(InPosition2D)
+		, bIsUpper(bInIsUpper){}
+	
+public:
+	Vector2 Position2D;
+	bool bIsUpper;
+};
+
 class HUD : public UIScreen
 {
 public:
@@ -31,12 +44,14 @@ protected:
 	class Texture* mCrosshair;
 	class Texture* mCrosshairEnemy;
 	class Texture* mBlipTex;
+	class Texture* mBlipUpTex;
+	class Texture* mBlipDownTex;
 	class Texture* mRadarArrow;
 	
 	// All the target components in the game
 	std::vector<class TargetComponent*> mTargetComps;
 	// 2D offsets of blips relative to radar
-	std::vector<Vector2> mBlips;
+	std::vector<RadarBlipData> mBlips;
 	// Adjust range of radar and radius
 	float mRadarRange;
 	float mRadarRadius;

@@ -28,3 +28,10 @@ TargetActor::TargetActor(Game* game)
 	new TargetComponent(this);
 
 }
+
+void TargetActor::UpdateActor(float deltaTime)
+{
+	static float time = 0.0f;
+	time += deltaTime;
+	SetPosition(Vector3(0.f, 0.f, Math::Cos(time) * 200.0f));
+}

@@ -292,15 +292,8 @@ void Game::LoadData()
 	// Different camera actors
 	mFPSActor = new FPSActor(this);
 
-	// Create target actors
 	a = new TargetActor(this);
 	a->SetPosition(Vector3(1450.0f, 0.0f, 100.0f));
-	a = new TargetActor(this);
-	a->SetPosition(Vector3(1450.0f, 0.0f, 400.0f));
-	a = new TargetActor(this);
-	a->SetPosition(Vector3(1450.0f, -500.0f, 200.0f));
-	a = new TargetActor(this);
-	a->SetPosition(Vector3(1450.0f, 500.0f, 200.0f));
 }
 
 void Game::UnloadData()

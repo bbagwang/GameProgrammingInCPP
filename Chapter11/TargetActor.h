@@ -13,4 +13,6 @@ class TargetActor : public Actor
 {
 public:
 	TargetActor(class Game* game);
+
+	virtual void UpdateActor(float deltaTime) override;
 };
