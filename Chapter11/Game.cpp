@@ -26,12 +26,13 @@
 #include <fstream>
 #include <sstream>
 #include <rapidjson/document.h>
+#include "MainMenu.h"
 
 Game::Game()
 :mRenderer(nullptr)
 ,mAudioSystem(nullptr)
 ,mPhysWorld(nullptr)
-,mGameState(EGameplay)
+,mGameState(EMainMenu)
 ,mUpdatingActors(false)
 {
 	
@@ -374,6 +375,8 @@ void Game::LoadData()
 	a = new TargetActor(this);
 	a->SetPosition(Vector3(0.0f, 1450.0f, 200.0f));
 	a->SetRotation(Quaternion(Vector3::UnitZ, -Math::PiOver2));
+
+	new MainMenu(this);
 }
 
 void Game::UnloadData()
