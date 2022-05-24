@@ -38,6 +38,7 @@ public:
 protected:
 	void UpdateCrosshair(float deltaTime);
 	void UpdateRadar(float deltaTime);
+	void UpdateArrow(float deltaTime);
 	
 	class Texture* mHealthBar;
 	class Texture* mRadar;
@@ -47,6 +48,7 @@ protected:
 	class Texture* mBlipUpTex;
 	class Texture* mBlipDownTex;
 	class Texture* mRadarArrow;
+	class Texture* mArrow;
 	
 	// All the target components in the game
 	std::vector<class TargetComponent*> mTargetComps;
@@ -57,4 +59,6 @@ protected:
 	float mRadarRadius;
 	// Whether the crosshair targets an enemy
 	bool mTargetEnemy;
+
+	float mArrowTargetRotation;
 };

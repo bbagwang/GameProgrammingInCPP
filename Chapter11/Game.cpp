@@ -27,6 +27,7 @@
 #include <sstream>
 #include <rapidjson/document.h>
 #include "MainMenu.h"
+#include "ArrowTarget.h"
 
 Game::Game()
 :mRenderer(nullptr)
@@ -360,9 +361,9 @@ void Game::LoadData()
 	// Different camera actors
 	mFPSActor = new FPSActor(this);
 
-	// Create target actors
-	a = new TargetActor(this);
-	a->SetPosition(Vector3(1450.0f, 0.0f, 100.0f));
+	//Create Arrow Target
+	mArrowTarget = new ArrowTarget(this);
+	mArrowTarget->SetPosition(Vector3(500.f, 0.f, 20.f));
 }
 
 void Game::UnloadData()

@@ -15,6 +15,7 @@
 #include "FPSActor.h"
 #include <algorithm>
 #include "TargetComponent.h"
+#include "ArrowTarget.h"
 
 HUD::HUD(Game* game)
 	:UIScreen(game)
@@ -31,6 +32,7 @@ HUD::HUD(Game* game)
 	mBlipUpTex = r->GetTexture("Assets/BlipUp.png");
 	mBlipDownTex = r->GetTexture("Assets/BlipDown.png");
 	mRadarArrow = r->GetTexture("Assets/RadarArrow.png");
+	mArrow = r->GetTexture("Assets/Arrow.png");
 }
 
 HUD::~HUD()
@@ -43,6 +45,7 @@ void HUD::Update(float deltaTime)
 	
 	UpdateCrosshair(deltaTime);
 	UpdateRadar(deltaTime);
+	UpdateArrow(deltaTime);
 }
 
 void HUD::Draw(Shader* shader)
@@ -62,8 +65,9 @@ void HUD::Draw(Shader* shader)
 	// Radar arrow
 	DrawTexture(shader, mRadarArrow, cRadarPos);
 	
-	//// Health bar
-	//DrawTexture(shader, mHealthBar, Vector2(-350.0f, -350.0f));
+	//Arrow Target
+	const Vector2 cArrowPos(0.f, 275.f);
+	DrawTexture(shader, mArrow, cArrowPos, 1.f, mArrowTargetRotation);
 }
 
 void HUD::AddTargetComponent(TargetComponent* tc)
@@ -143,5 +147,28 @@ void HUD::UpdateRadar(float deltaTime)
 			blipPos = Vector2::Transform(blipPos, rotMat);
 			mBlips.emplace_back(blipPos, bIsUpper);
 		}
+	}
+}
+
+void HUD::UpdateArrow(float deltaTime)
+{
+	ArrowTarget* Target = mGame->GetArrowTarget();
+	if (Target)
+	{
+		Vector3 TargetPos = Target->GetPosition();
+		Vector2 TargetPos2D(TargetPos.x, TargetPos.y);
+
+		// Convert player position to radar coordinates (x forward, z up)
+		Vector3 playerPos = mGame->GetPlayer()->GetPosition();
+		Vector2 playerPos2D(playerPos.x, playerPos.y);
+		
+		Vector2 ToTargetVecNormal = TargetPos2D - playerPos2D;
+		ToTargetVecNormal.Normalize();
+		
+		// Ditto for player forward
+		Vector3 playerForward = mGame->GetPlayer()->GetForward();
+		Vector2 playerForward2D(playerForward.x, playerForward.y);
+		
+		mArrowTargetRotation = Math::Atan2(ToTargetVecNormal.x, ToTargetVecNormal.y) - Math::Atan2(playerForward2D.x, playerForward2D.y);
 	}
 }
