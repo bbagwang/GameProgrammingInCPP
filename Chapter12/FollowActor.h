@@ -15,7 +15,7 @@ public:
 	FollowActor(class Game* game);
 
 	void ActorInput(const uint8_t* keys) override;
-
+	virtual void UpdateActor(float deltaTime) override;
 	void SetVisible(bool visible);
 private:
 	class MoveComponent* mMoveComp;

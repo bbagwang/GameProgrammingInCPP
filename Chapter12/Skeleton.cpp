@@ -124,6 +124,19 @@ bool Skeleton::Load(const std::string& fileName)
 	return true;
 }
 
+const int Skeleton::GetBoneIndex(std::string BoneName) const
+{
+	for (int i = 0; i < GetNumBones(); i++)
+	{
+		if (mBones[i].mName == BoneName)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 void Skeleton::ComputeGlobalInvBindPose()
 {
 	//본의 수를 재조정한다. 본은 자동적으로 초기화된다.

@@ -28,6 +28,7 @@ public:
 	// Getter functions
 	size_t GetNumBones() const { return mBones.size(); }
 	const Bone& GetBone(size_t idx) const { return mBones[idx]; }
+	const int GetBoneIndex(std::string BoneName) const;
 	const std::vector<Bone>& GetBones() const { return mBones; }
 	const std::vector<Matrix4>& GetGlobalInvBindPoses() const { return mGlobalInvBindPoses; }
 protected:

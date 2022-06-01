@@ -9,6 +9,8 @@
 #pragma once
 #include "MeshComponent.h"
 #include "MatrixPalette.h"
+#include <vector>
+#include <string>
 
 class SkeletalMeshComponent : public MeshComponent
 {
@@ -24,6 +26,10 @@ public:
 
 	// Play an animation. Returns the length of the animation
 	float PlayAnimation(const class Animation* anim, float playRate = 1.0f);
+
+	//현재 포즈의 특정 본의 오브젝트 공간 위치를 반환
+	Vector3 GetBonePosition(std::string BoneName);
+
 protected:
 	void ComputeMatrixPalette();
 
@@ -32,4 +38,6 @@ protected:
 	const class Animation* mAnimation;
 	float mAnimPlayRate;
 	float mAnimTime;
+
+	std::vector<Matrix4> mCurrentPoses;
 };

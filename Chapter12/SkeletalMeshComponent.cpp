@@ -78,16 +78,24 @@ float SkeletalMeshComponent::PlayAnimation(const Animation* anim, float playRate
 	return mAnimation->GetDuration();
 }
 
+
+Vector3 SkeletalMeshComponent::GetBonePosition(std::string BoneName)
+{
+	const int BoneIndex = mSkeleton->GetBoneIndex(BoneName);
+	Vector3 ObjectSpaceLocation = Vector3::Transform(Vector3::Zero, mCurrentPoses[BoneIndex]);
+	return Vector3::Transform(ObjectSpaceLocation, GetOwner()->GetWorldTransform());
+}
+
 void SkeletalMeshComponent::ComputeMatrixPalette()
 {
 	const std::vector<Matrix4>& globalInvBindPoses = mSkeleton->GetGlobalInvBindPoses();
-	std::vector<Matrix4> currentPoses;
-	mAnimation->GetGlobalPoseAtTime(currentPoses, mSkeleton, mAnimTime);
+	
+	mAnimation->GetGlobalPoseAtTime(mCurrentPoses, mSkeleton, mAnimTime);
 
 	// Setup the palette for each bone
 	for (size_t i = 0; i < mSkeleton->GetNumBones(); i++)
 	{
 		// Global inverse bind pose matrix times current pose matrix
-		mPalette.mEntry[i] = globalInvBindPoses[i] * currentPoses[i];
+		mPalette.mEntry[i] = globalInvBindPoses[i] * mCurrentPoses[i];
 	}
 }
