@@ -171,3 +171,66 @@ void Animation::GetGlobalPoseAtTime(std::vector<Matrix4>& outPoses, const Skelet
 		outPoses[bone] = localMat * outPoses[bones[bone].mParent];
 	}
 }
+
+void Animation::GetGlobalBlendPoseAtTime(std::vector<Matrix4>& outPoses, const class Skeleton* inSkeleton, const Animation* InAnimA, const float InTimeA, const Animation* InAnimB, const float InTimeB, const float BlendWeight)
+{
+	if(!inSkeleton || !InAnimA || !InAnimB)
+	{
+		return;
+	}
+	
+	const int SkeletonBoneCount = inSkeleton->GetNumBones();
+	if (outPoses.size() != SkeletonBoneCount)
+	{
+		outPoses.resize(SkeletonBoneCount);
+	}
+	
+	float FrameDurationA = InAnimA->GetFrameDuration();
+	size_t FrameA = static_cast<size_t>(InTimeA / FrameDurationA);
+	size_t NextFrameA = FrameA + 1;
+	float PercentA = InTimeA / FrameDurationA - FrameA;
+
+	float FrameDurationB = InAnimB->GetFrameDuration();
+	size_t FrameB = static_cast<size_t>(InTimeB / FrameDurationB);
+	size_t NextFrameB = FrameB + 1;
+	float PercentB = InTimeB / FrameDurationB - FrameB;
+
+	if (InAnimA->mTracks[0].size() > 0 && InAnimB->mTracks[0].size() > 0)
+	{
+		BoneTransform InterpA = BoneTransform::Interpolate(
+			InAnimA->mTracks[0][FrameA], InAnimA->mTracks[0][NextFrameA], PercentA);
+		
+		BoneTransform InterpB = BoneTransform::Interpolate(
+			InAnimB->mTracks[0][FrameB], InAnimB->mTracks[0][NextFrameB], PercentB);
+
+		BoneTransform BlendedTransform = BoneTransform::Interpolate(
+			InterpA, InterpB, BlendWeight);
+
+		outPoses[0] = BlendedTransform.ToMatrix();
+	}
+	else
+	{
+		outPoses[0] = Matrix4::Identity;
+	}
+
+	const std::vector<Skeleton::Bone>& Bones = inSkeleton->GetBones();
+	for (size_t BoneIndex = 1; BoneIndex < SkeletonBoneCount; BoneIndex++)
+	{
+		Matrix4 localMat;
+		if (InAnimA->mTracks[BoneIndex].size() > 0 && InAnimB->mTracks[BoneIndex].size() > 0)
+		{
+			BoneTransform InterpA = BoneTransform::Interpolate(
+				InAnimA->mTracks[BoneIndex][FrameA], InAnimA->mTracks[BoneIndex][NextFrameA], PercentA);
+
+			BoneTransform InterpB = BoneTransform::Interpolate(
+				InAnimB->mTracks[BoneIndex][FrameB], InAnimB->mTracks[BoneIndex][NextFrameB], PercentB);
+
+			BoneTransform BlendedTransform = BoneTransform::Interpolate(
+				InterpA, InterpB, BlendWeight);
+				
+			localMat = BlendedTransform.ToMatrix();
+		}
+
+		outPoses[BoneIndex] = localMat * outPoses[Bones[BoneIndex].mParent];
+	}
+}

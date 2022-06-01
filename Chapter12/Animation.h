@@ -25,6 +25,9 @@ public:
 	// bone at the specified time in the animation. It is expected that the time
 	// is >= 0.0f and <= mDuration
 	void GetGlobalPoseAtTime(std::vector<Matrix4>& outPoses, const class Skeleton* inSkeleton, float inTime) const;
+
+	static void GetGlobalBlendPoseAtTime(std::vector<Matrix4>& outPoses, const class Skeleton* inSkeleton, const Animation* InAnimA, const float InTimeA, const Animation* InAnimB, const float InTimeB, const float BlendWeight);
+
 private:
 	// Number of bones for the animation
 	size_t mNumBones;

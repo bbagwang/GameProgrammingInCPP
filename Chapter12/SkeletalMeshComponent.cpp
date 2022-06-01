@@ -19,7 +19,19 @@
 
 SkeletalMeshComponent::SkeletalMeshComponent(Actor* owner)
 	:MeshComponent(owner, true)
-	,mSkeleton(nullptr)
+	, mPalette()
+	, mSkeleton(nullptr)
+	, mAnimation(nullptr)
+	, mBlendBaseAnimation(nullptr)
+	, mAnimPlayRate(1.f)
+	, mAnimTime(0.f)
+	, mBlendTime(0.f)
+	, mBlendBaseAnimTime(0.f)
+	, mCurrentBlendTime(0.f)
+	, mCurrentBlendWeight(0.f)
+	, bBlending(0.f)
+	, mCurrentPoses()
+	, mBlendBasePoses()
 {
 }
 
@@ -60,17 +72,50 @@ void SkeletalMeshComponent::Update(float deltaTime)
 			mAnimTime -= mAnimation->GetDuration();
 		}
 
+		if (bBlending)
+		{
+			if (mCurrentBlendWeight > 1.f)
+			{
+				bBlending = false;
+				mBlendBaseAnimation = nullptr;
+				mBlendTime = 0.f;
+				mBlendBaseAnimTime = 0.f;
+				mCurrentBlendTime = 0.f;
+				mCurrentBlendWeight = 0.f;
+				mBlendBasePoses.empty();
+				SDL_Log("StopBlending");
+			}
+			else
+			{
+				mCurrentBlendTime += deltaTime;
+				mCurrentBlendWeight = mCurrentBlendTime / mBlendTime;
+				SDL_Log("%f", mCurrentBlendWeight);
+			}
+		}
+
 		// Recompute matrix palette
 		ComputeMatrixPalette();
 	}
 }
 
-float SkeletalMeshComponent::PlayAnimation(const Animation* anim, float playRate)
+float SkeletalMeshComponent::PlayAnimation(const Animation* anim, float playRate, float BlendTime)
 {
+	if (BlendTime > 0.f && mAnimation)
+	{
+		SDL_Log("StartBlending");
+		bBlending = true;
+		mBlendBaseAnimation = mAnimation;
+		mBlendTime = BlendTime;
+		mBlendBaseAnimTime = mAnimTime;
+		mCurrentBlendTime = 0.f;
+		mCurrentBlendWeight = 0.f;
+		mBlendBasePoses = mCurrentPoses;
+	}
+	
 	mAnimation = anim;
 	mAnimTime = 0.0f;
 	mAnimPlayRate = playRate;
-
+	
 	if (!mAnimation) { return 0.0f; }
 
 	ComputeMatrixPalette();
@@ -90,12 +135,28 @@ void SkeletalMeshComponent::ComputeMatrixPalette()
 {
 	const std::vector<Matrix4>& globalInvBindPoses = mSkeleton->GetGlobalInvBindPoses();
 	
+	if (bBlending)
+	{
+		Animation::GetGlobalBlendPoseAtTime(
+			mCurrentPoses,
+			mSkeleton,
+			mBlendBaseAnimation,
+			mBlendBaseAnimTime,
+			mAnimation,
+			mAnimTime,
+			mCurrentBlendWeight);	
+	}
+	else
+	{
 	mAnimation->GetGlobalPoseAtTime(mCurrentPoses, mSkeleton, mAnimTime);
+	}
+	
+	
 
 	// Setup the palette for each bone
 	for (size_t i = 0; i < mSkeleton->GetNumBones(); i++)
 	{
-		// Global inverse bind pose matrix times current pose matrix
-		mPalette.mEntry[i] = globalInvBindPoses[i] * mCurrentPoses[i];
+			// Global inverse bind pose matrix times current pose matrix
+			mPalette.mEntry[i] = globalInvBindPoses[i] * mCurrentPoses[i];
 	}
 }

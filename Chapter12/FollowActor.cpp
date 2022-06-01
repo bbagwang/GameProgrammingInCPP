@@ -71,7 +71,7 @@ void FollowActor::UpdateActor(float deltaTime)
 {
 	Vector3 HandRPosition = mMeshComp->GetBonePosition("hand_r");
 	
-	SDL_Log("X : %f | Y : %f | Z : %f", HandRPosition.x, HandRPosition.y, HandRPosition.z);
+	//SDL_Log("X : %f | Y : %f | Z : %f", HandRPosition.x, HandRPosition.y, HandRPosition.z);
 }
 
 void FollowActor::SetVisible(bool visible)
