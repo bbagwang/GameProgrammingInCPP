@@ -21,6 +21,7 @@ public:
 
 	// Diffuse color
 	Vector3 mDiffuseColor;
+	Vector3 mSpecColor;
 	// Radius of light
 	float mInnerRadius;
 	float mOuterRadius;

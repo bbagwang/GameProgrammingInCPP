@@ -336,6 +336,7 @@ void Game::LoadData()
 				break;
 			}
 			p->mDiffuseColor = color;
+			p->mSpecColor = Color::Purple;
 			p->mInnerRadius = 100.0f;
 			p->mOuterRadius = 200.0f;
 		}

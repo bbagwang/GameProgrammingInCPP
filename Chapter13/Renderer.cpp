@@ -510,6 +510,7 @@ bool Renderer::LoadShaders()
 	mGGlobalShader->SetIntUniform("uGDiffuse", 0);
 	mGGlobalShader->SetIntUniform("uGNormal", 1);
 	mGGlobalShader->SetIntUniform("uGWorldPos", 2);
+	mGGlobalShader->SetIntUniform("uGSpecPower", 3);
 	// The view projection is just the sprite one
 	mGGlobalShader->SetMatrixUniform("uViewProj", spriteViewProj);
 	// The world transform scales to the screen and flips y
@@ -529,6 +530,7 @@ bool Renderer::LoadShaders()
 	mGPointLightShader->SetIntUniform("uGDiffuse", 0);
 	mGPointLightShader->SetIntUniform("uGNormal", 1);
 	mGPointLightShader->SetIntUniform("uGWorldPos", 2);
+	mGPointLightShader->SetIntUniform("uGSpecPower", 3);
 	mGPointLightShader->SetVector2Uniform("uScreenDimensions",
 		Vector2(mScreenWidth, mScreenHeight));
 	return true;

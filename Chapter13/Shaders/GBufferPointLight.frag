@@ -20,6 +20,7 @@ layout(location = 0) out vec4 outColor;
 uniform sampler2D uGDiffuse;
 uniform sampler2D uGNormal;
 uniform sampler2D uGWorldPos;
+uniform sampler2D uGSpecPower;
 
 // Create a struct for the point light
 struct PointLight
@@ -28,6 +29,8 @@ struct PointLight
 	vec3 mWorldPos;
 	// Diffuse color
 	vec3 mDiffuseColor;
+	//Specular Color
+	vec3 mSpecularColor;
 	// Radius of the light
 	float mInnerRadius;
 	float mOuterRadius;
@@ -46,6 +49,7 @@ void main()
 	vec3 gbufferDiffuse = texture(uGDiffuse, gbufferCoord).xyz;
 	vec3 gbufferNorm = texture(uGNormal, gbufferCoord).xyz;
 	vec3 gbufferWorldPos = texture(uGWorldPos, gbufferCoord).xyz;
+	float gbufferSpecPower = texture(uGSpecPower, gbufferCoord).x;
 	
 	// Surface normal
 	vec3 N = normalize(gbufferNorm);
@@ -66,7 +70,11 @@ void main()
 		// The diffuse color of the light depends on intensity
 		vec3 DiffuseColor = mix(uPointLight.mDiffuseColor,
 								vec3(0.0, 0.0, 0.0), intensity);
-		Phong = DiffuseColor * NdotL;
+
+		vec3 SpecularColor = mix(uPointLight.mSpecularColor,
+								vec3(0.0, 0.0, 0.0), intensity);
+
+		Phong = DiffuseColor * NdotL + SpecularColor;
 	}
 
 	// Final color is texture color times phong light (alpha = 1)

@@ -40,6 +40,7 @@ void PointLightComponent::Draw(Shader* shader, Mesh* mesh)
 	// Set point light shader constants
 	shader->SetVectorUniform("uPointLight.mWorldPos", mOwner->GetPosition());
 	shader->SetVectorUniform("uPointLight.mDiffuseColor", mDiffuseColor);
+	shader->SetVectorUniform("uPointLight.mSpecularColor", mSpecColor);
 	shader->SetFloatUniform("uPointLight.mInnerRadius", mInnerRadius);
 	shader->SetFloatUniform("uPointLight.mOuterRadius", mOuterRadius);
 

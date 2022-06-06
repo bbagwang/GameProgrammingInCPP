@@ -18,6 +18,7 @@ public:
 		EDiffuse = 0,
 		ENormal,
 		EWorldPos,
+		ESpecular,
 		NUM_GBUFFER_TEXTURES
 	};
 
