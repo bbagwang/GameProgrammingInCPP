@@ -29,6 +29,7 @@
 #include "Skeleton.h"
 #include "Animation.h"
 #include "PointLightComponent.h"
+#include "SpotLightComponent.h"
 
 Game::Game()
 :mRenderer(nullptr)
@@ -313,32 +314,65 @@ void Game::LoadData()
 			a->SetPosition(pos);
 			// Create some point lights
 			a = new Actor(this);
-			pos.z += 100.0f;
+			pos.z += 150.0f;
 			a->SetPosition(pos);
-			PointLightComponent* p = new PointLightComponent(a);
-			Vector3 color;
-			switch ((i + j) % 5)
+			
+			////Point Lights
+			//{
+			//	PointLightComponent* p = new PointLightComponent(a);
+			//	Vector3 color;
+			//	switch ((i + j) % 5)
+			//	{
+			//	case 0:
+			//		color = Color::Green;
+			//		break;
+			//	case 1:
+			//		color = Color::Blue;
+			//		break;
+			//	case 2:
+			//		color = Color::Red;
+			//		break;
+			//	case 3:
+			//		color = Color::Yellow;
+			//		break;
+			//	case 4:
+			//		color = Color::LightPink;
+			//		break;
+			//	}
+			//	p->mDiffuseColor = color;
+			//	p->mSpecColor = Color::Purple;
+			//	p->mInnerRadius = 100.0f;
+			//	p->mOuterRadius = 200.0f;
+			//}
+
+			//Spot Lights
 			{
-			case 0:
-				color = Color::Green;
-				break;
-			case 1:
-				color = Color::Blue;
-				break;
-			case 2:
-				color = Color::Red;
-				break;
-			case 3:
-				color = Color::Yellow;
-				break;
-			case 4:
-				color = Color::LightPink;
-				break;
+				SpotLightComponent* p = new SpotLightComponent(a);
+				Vector3 color;
+				switch ((i + j) % 5)
+				{
+				case 0:
+					color = Color::Green;
+					break;
+				case 1:
+					color = Color::Blue;
+					break;
+				case 2:
+					color = Color::Red;
+					break;
+				case 3:
+					color = Color::Yellow;
+					break;
+				case 4:
+					color = Color::LightPink;
+					break;
+				}
+				p->mDiffuseColor = color;
+				p->mSpecColor = color;
+				p->mInnerRadius = 100.0f;
+				p->mOuterRadius = 200.0f;
+				p->mRotation = Quaternion(Vector3::UnitY, Math::Pi / 2.0f);
 			}
-			p->mDiffuseColor = color;
-			p->mSpecColor = Color::Purple;
-			p->mInnerRadius = 100.0f;
-			p->mOuterRadius = 200.0f;
 		}
 	}
 

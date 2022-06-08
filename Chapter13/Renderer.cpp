@@ -20,6 +20,7 @@
 #include "SkeletalMeshComponent.h"
 #include "GBuffer.h"
 #include "PointLightComponent.h"
+#include "SpotLightComponent.h"
 
 Renderer::Renderer(Game* game)
 	:mGame(game)
@@ -113,6 +114,9 @@ bool Renderer::Initialize(float screenWidth, float screenHeight)
 	// Load point light mesh
 	mPointLightMesh = GetMesh("Assets/PointLight.gpmesh");
 
+	// Load Spot light mesh
+	mSpotLightMesh = GetMesh("Assets/SpotLight.gpmesh");
+	
 	return true;
 }
 
@@ -136,6 +140,12 @@ void Renderer::Shutdown()
 	{
 		delete mPointLights.back();
 	}
+	// Delete Spot lights
+	while (!mSpotLights.empty())
+	{
+		delete mSpotLights.back();
+	}
+
 	delete mSpriteVerts;
 	mSpriteShader->Unload();
 	delete mSpriteShader;
@@ -267,6 +277,17 @@ void Renderer::RemovePointLight(PointLightComponent* light)
 {
 	auto iter = std::find(mPointLights.begin(), mPointLights.end(), light);
 	mPointLights.erase(iter);
+}
+
+void Renderer::AddSpotLight(class SpotLightComponent* light)
+{
+	mSpotLights.emplace_back(light);
+}
+
+void Renderer::RemoveSpotLight(class SpotLightComponent* light)
+{
+	auto iter = std::find(mSpotLights.begin(), mSpotLights.end(), light);
+	mSpotLights.erase(iter);
 }
 
 Texture* Renderer::GetTexture(const std::string& fileName)
@@ -459,6 +480,26 @@ void Renderer::DrawFromGBuffer()
 	{
 		p->Draw(mGPointLightShader, mPointLightMesh);
 	}
+
+	// Set the Spot light shader and mesh as active
+	mGSpotLightShader->SetActive();
+	mSpotLightMesh->GetVertexArray()->SetActive();
+	// Set the view-projection matrix
+	mGSpotLightShader->SetMatrixUniform("uViewProj",
+		mView * mProjection);
+	// Set the G-buffer textures for sampling
+	mGBuffer->SetTexturesActive();
+
+	// The Spot light color should add to existing color
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
+
+	// Draw the Spot lights
+	for (SpotLightComponent* p : mSpotLights)
+	{
+		p->Draw(mGSpotLightShader, mSpotLightMesh);
+	}
+
 }
 
 bool Renderer::LoadShaders()
@@ -533,6 +574,23 @@ bool Renderer::LoadShaders()
 	mGPointLightShader->SetIntUniform("uGSpecPower", 3);
 	mGPointLightShader->SetVector2Uniform("uScreenDimensions",
 		Vector2(mScreenWidth, mScreenHeight));
+
+	// Create a shader for Spot lights from GBuffer
+	mGSpotLightShader = new Shader();
+	if (!mGSpotLightShader->Load("Shaders/BasicMesh.vert",
+		"Shaders/GBufferSpotLight.frag"))
+	{
+		return false;
+	}
+	// Set sampler indices
+	mGSpotLightShader->SetActive();
+	mGSpotLightShader->SetIntUniform("uGDiffuse", 0);
+	mGSpotLightShader->SetIntUniform("uGNormal", 1);
+	mGSpotLightShader->SetIntUniform("uGWorldPos", 2);
+	mGSpotLightShader->SetIntUniform("uGSpecPower", 3);
+	mGSpotLightShader->SetVector2Uniform("uScreenDimensions",
+		Vector2(mScreenWidth, mScreenHeight));
+	
 	return true;
 }
 

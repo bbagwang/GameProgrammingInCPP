@@ -1020,6 +1020,23 @@ public:
 		return retVal;
 	}
 
+	static Quaternion EulerToQuaternion(const Vector3& r)
+	{
+		float c1 = Math::Cos(r.x / 2.0f);
+		float s1 = Math::Sin(r.x / 2.0f);
+		float c2 = Math::Cos(r.y / 2.0f);
+		float s2 = Math::Sin(r.y / 2.0f);
+		float c3 = Math::Cos(r.z / 2.0f);
+		float s3 = Math::Sin(r.z / 2.0f);
+
+		Quaternion q;
+		q.x = s1 * c2 * c3 - c1 * s2 * s3;
+		q.y = c1 * s2 * c3 + s1 * c2 * s3;
+		q.z = c1 * c2 * s3 - s1 * s2 * c3;
+		q.w = c1 * c2 * c3 + s1 * s2 * s3;
+		return q;
+	}
+
 	static const Quaternion Identity;
 };
 
